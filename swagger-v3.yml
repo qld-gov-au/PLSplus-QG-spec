@@ -164,6 +164,274 @@ info:
       * &lt;PhysicalAddressIndicator>N&lt;/PhysicalAddressIndicator>
 
     Postcodes where available are supplied as part of the address response. It should be remembered that Postcodes do not form part of an address but are for Australia Post Delivery purposes. There may be some descrepancies with postcode where Australia Post has deviated from approved Locality boundaries. Please note that some parts of Qld (and Australia) do not have a postcode. In these cases the Postcode element is not included in the response.
+
+    ## Definitions of Standard Outputs
+    ### Lot and Plan Number
+    The Lot and Plan Number follows the QSIIS Land Parcel Identification Standard. This standard provides a consistent method for uniquely identifying all land parcels in Queensland. In the context of this document, a parcel is understood to be a bounded area in which an interest relating to the land exists or will exist. It is also recognised that such a parcel (or bounded area) may have more than one interest associated with it. Any secondary interest (strata plans) can be validated with PLSplus.
+    ### Street Address
+    The following table shows a mapping between the sub-elements within the Address element and the Address Details of Australian Standard AS4590 – Interchange of Client Information. AS 4590 deals with the interchange of client information - client information such as personal and addressing details - data that is routinely collected by many organisations from their customers/clients and used for contact, logistics and business activity. Address Details are shown in Section 5 of AS 4590.
+
+    ## Acceptable Abbreviations
+
+    ### Road Type Abbreviations
+      Abbreviation - 	Road Name Type
+      * ACCS - 	ACCESS
+      * ALLY -	ALLEY
+      * ALWY -	ALLEYWAY
+      * AMBL -	AMBLE
+      *	ANCG -	ANCHORAGE
+      *	APP -	APPROACH
+      *	ARC -	ARCADE
+      *	ART -	ARTERY
+      *	AV -	AVENUE
+      *	AVE -	AVENUE
+      *	BASN -	BASIN
+      *	BCH -	BEACH
+      *	BEND -	BEND
+      *	BLK -	BLOCK
+      *	BWLK -	BOARDWALK
+      *	BVD -	BOULEVARD
+      *	BRCE -	BRACE
+      *	BRAE -	BRAE
+      *	BRK -	BREAK
+      *	BDGE -	BRIDGE
+      *	BDWY -	BROADWAY
+      *	BROW -	BROW
+      *	BYPA -	BYPASS
+      *	BYWY -	BYWAY
+      *	CAUS -	CAUSEWAY
+      *	CTR -	CENTRE
+      *	CNWY -	CENTREWAY
+      *	CH -	CHASE
+      *	CIR -	CIRCLE
+      *	CLT -	CIRCLET
+      *	CCT -	CIRCUIT
+      *	CRCS -	CIRCUS
+      *	CL -	CLOSE
+      *	CLDE -	COLONNADE
+      *	CMMN -	COMMON
+      *	CON -	CONCOURSE
+      *	CPS -	COPSE
+      *	CNR -	CORNER
+      *	CSO -	CORSO
+      *	CRT -	COURT
+      *	CT -	COURT
+      *	CTYD -	COURTYARD
+      *	COVE -	COVE
+      *	CK -	CREEK
+      *	CR -	CRESCENT
+      *	CRES -	CRESCENT
+      *	CRST -	CREST
+      *	CRSS -	CROSS
+      *	CRSG -	CROSSING
+      *	CRD -	CROSSROAD
+      *	COWY -	CROSSWAY
+      *	CUWY -	CRUISEWAY
+      *	CDS -	CUL-DE-SAC
+      *	CTTG -	CUTTING
+      *	DALE -	DALE
+      *	DELL -	DELL
+      *	DEVN -	DEVIATION
+      *	DIP -	DIP
+      *	DSTR -	DISTRUBUTOR
+      *	DR -	DRIVE
+      *	DRV -	DRIVE
+      *	DRWY -	DRIVEWAY
+      *	E -	EAST
+      *	EDGE -	EDGE
+      *	ELB -	ELBOW
+      *	END -	END
+      *	ENT -	ENTRANCE
+      *	ESP -	ESPLANADE
+      *	EST -	ESTATE
+      *	EXP -	EXPRESSWAY
+      *	EXTN -	EXTENSION
+      *	FAWY -	FAIRWAY
+      *	FAWA -	FAIRWAY
+      *	FTRK -	FIRE TRACK
+      *	FITR -	FIRETRAIL
+      *	FTRL -	FIRETRAIL
+      *	FLAT -	FLAT
+      *	FOLW -	FOLLOW
+      *	FTWY -	FOOTWAY
+      *	FSHR -	FORESHORE
+      *	FORM -	FORMATION
+      *	FWY -	FREEWAY
+      *	FRNT -	FRONT
+      *	FRTG -	FRONTAGE
+      *	GAP -	GAP
+      *	GDN -	GARDEN
+      *	GDNS -	GARDENS
+      *	GTE -	GATE
+      *	GTES -	GATES
+      *	GLD -	GLADE
+      *	GLDE -	GLADE
+      *	GLEN -	GLEN
+      *	GRA -	GRANGE
+      *	GRN -	GREEN
+      *	GRND -	GROUND
+      *	GR -	GROVE
+      *	GLY -	GULLY
+      *	HTS -	HEIGHTS
+      *	HRD -	HIGHROAD
+      *	HWY -	HIGHWAY
+      *	HILL -	HILL
+      *	INTG -	INTERCHANGE
+      *	INTN -	INTERSECTION
+      *	JNC -	JUNCTION
+      *	KEY -	KEY
+      *	LDG -	LANDING
+      *	LANE -	LANE
+      *	LNWY -	LANEWAY
+      *	LEES -	LEES
+      *	LINE -	LINE
+      *	LINK -	LINK
+      *	LT -	LITTLE
+      *	LKT -	LOOKOUT
+      *	LOOP -	LOOP
+      *	LWR -	LOWER
+      *	MALL -	MALL
+      *	MNDR -	MEANDER
+      *	MEW -	MEW
+      *	MEWS -	MEWS
+      *	MWY -	MOTORWAY
+      *	MT -	MOUNT
+      *	MT -	MOUNT
+      *	NOOK -	NOOK
+      *	N -	NORTH
+      *	OTLK -	OUTLOOK
+      *	PDE -	PARADE
+      *	PARK -	PARK
+      *	PKLD -	PARKLANDS
+      *	PWY -	PARKWAY
+      *	PKWY -	PARKWAY
+      *	PART -	PART
+      *	PASS -	PASS
+      *	PATH -	PATH
+      *	PHWY -	PATHWAY
+      *	PIAZ -	PIAZZA
+      *	PL -	PLACE
+      *	PLAT -	PLATEAU
+      *	PLZA -	PLAZA
+      *	PKT -	POCKET
+      *	PNT -	POINT
+      *	PORT -	PORT
+      *	PROM -	PROMENADE
+      *	QUAD -	QUAD
+      *	QDGL -	QUADRANGLE
+      *	QDRT -	QUADRANT
+      *	QY -	QUAY
+      *	QYS -	QUAYS
+      *	RMBL -	RAMBLE
+      *	RAMP -	RAMP
+      *	RNGE -	RANGE
+      *	RCH -	REACH
+      *	RES -	RESERVE
+      *	REST -	REST
+      *	RTT -	RETREAT
+      *	RIDE -	RIDE
+      *	RDGE -	RIDEG
+      *	RGWY -	RIDGEWAY
+      *	ROWY -	RIGHT OF WAY
+      *	RING -	RING
+      *	RISE -	RISE
+      *	RVR -	RIVER
+      *	RVWY -	RIVERWAY
+      *	RVRA -	RIVIERA
+      *	RD -	ROAD
+      *	RDS -	ROADS
+      *	RDSD -	ROADSIDE
+      *	RDWY -	ROADWAY
+      *	RNDE -	RONDE
+      *	RSBL -	ROSEBOWL
+      *	RTY -	ROTARY
+      *	RND -	ROUND
+      *	RTE -	ROUTE
+      *	ROW -	ROW
+      *	RUE -	RUE
+      *	RUN -	RUN
+      *	SWY -	SERVICE WAY
+      *	SDNG -	SIDING
+      *	SLPE -	SLOPE
+      *	SND -	SOUND
+      *	S -	SOUTH
+      *	SPUR -	SPUR
+      *	SQ -	SQUARE
+      *	STRS -	STAIRS
+      *	SHWY -	STATE HIGHWAY
+      *	STPS -	STEPS
+      *	STRA -	STRAND
+      *	ST -	STREET
+      *	STRP -	STRIP
+      *	SBWY -	SUBWAY
+      *	TARN -	TARN
+      *	TCE -	TERRACE
+      *	TER -	TERRACE
+      *	TERR -	TERRACE
+      *	THOR -	THOROUGHFARE
+      *	TLWY -	TOLLWAY
+      *	TOP -	TOP
+      *	TOR -	TOR
+      *	TWRS -	TOWERS
+      *	TRK -	TRACK
+      *	TRL -	TRAIL
+      *	TRLR -	TRAILER
+      *	TRI -	TRIANGLE
+      *	TKWY -	TRUNKWAY
+      *	TURN -	TURN
+      *	UPAS -	UNDERPASS
+      *	STE -	UNIT
+      *	FLAT -	UNIT
+      *	UPR -	UPPER
+      *	VALE -	VALE
+      *	VDCT -	VIADUCT
+      *	VIEW -	VIEW
+      *	VLLS -	VILLAS
+      *	VSTA -	VISTA
+      *	WADE -	WADE
+      *	WALK -	WALK
+      *	WKWY -	WALKWAY
+      *	WAY -	WAY
+      *	W -	WEST
+      *	WHRF -	WHARF
+      *	WYND -	WYND
+      *	YARD -	YARD
+
+    ###Acceptable State Names and Abbreviations
+      Only the correct spelling is assumed and only these combinations (case sensitive) below&colon;
+      * Australian Antarctic Territory – `AAT`, `A A T`
+      * Australian Capital Territory – `ACT`, `A C T`
+      * NewSouthWales –`NSW`, `N S W`
+      * Northern Territory – `NT`, `N T`
+      * Queensland – `Q`, `Qld`
+      * South Australia – `SA`, `S A`
+      * Tasmania – `TAS`
+      * Victoria – `VIC`
+      * Western Australia – `WA`, `W A`
+
+    #### Tips and Tricks
+      1. Not including a “State” in an address, incorrectly spelling “State” name or “State” abbreviation will be interpreted by PLSplusQG as a “Queensland address”.
+      2. Any other State name or abbreviation will be interpreted as a Qld address and invoke the Soundex routines and supply surprising results.
+      3. Do not use a full stop “.” in any abbreviation.
+      4. Postcode can form part of an address.
+
+    ## Confidence Level
+      The Confidence Level is a value between 0 – 100 returned in the response for ValidateAddress and ParseAddress requests. It gives the user an understanding of the validity of the requested address. In the response the element name is “Confidence” and it is a value that represents the categories listed in Section 11.3.
+      * No confidence is displayed for ValidateLotPlan however a “Count” of 1 could be taken as valid of a confidence of 100.
+      * No confidence is displayed for ValidateCoordinate operation which can, in some situations, be problematic, eg high rise building units where all geocoords from the building are projected to ground level. Meshblock information can be “Included” with the request for any service where the option is available.
+
+    ## Some example errors
+      1. **Service Not Available*8
+      Response is given if a component of the service is unavailable or there is an unexpected system failure.
+      2. **InvalidRequest + Message** (“This request was rejected due to a violation.....)
+      <br/>Response is returned if the any of the elements are outside of the following parameters 0-9, A-Z, &, /, (, ), ‘, -, # See allowed Metadata Character valid list
+        * No wildcards can be used.
+        * The message may contain “Street Name”, “Locality” or “Local Government” invalid’.
+      3. **No Matches found**
+      <br/>A “ResultCount”&colon; “0” means no matches were found
+      4. **Too Many Results**
+      <br/>Response is given when the request returns more than 500 responses.
+
   contact: {}
   version: '1.0'
 servers:
@@ -1389,7 +1657,7 @@ paths:
                 $ref: '#/components/schemas/PLSPlus_ValidateCoordinates_OutputMessage'
               examples:
                 first:
-                  summary: ''
+                  summary: 'Example 1: closest Building Centroid (BC) on a multi-address building complex'
                   value:
                     ValidateCoordinatesResponse:
                       ValidateCoordinatesResult:
@@ -1439,7 +1707,20 @@ paths:
       tags:
         - PLSp-QG
       summary: AutoCompleteAddress
-      description: AutoCompleteAddress
+      description:  |
+        ## Design Requirements
+        The AutoCompleteAddress operation is designed to display a list of up to 20 addresses that prempt an address the user may require. All addresses shown are valid and could be captured by an application and used as input to the ParseAddress operation to deliver extra parameters about the address (eg address location, address type, Geocode type etc). The Operation is only valid with the information stored in the Queensland Address database. Interstate addresses will not be found.
+
+        Please note that because of the quirky nature of some addresses in the database a building or complex name when available will be added to the end of the address in parenthesis.
+
+        Tip&colon; When usiing Level or L do not include a space between the Level and Level number
+
+        The AutoComplete operation is not available for addresses outside the state of Queensland.
+
+        #### Tips and Tricks
+        1. No punctuation is required in the request string for this operation. Refrain from using fullstops as they will cause problems with this operation.
+        2. If after about 8 characters (numbers and characters) no meaningful results are being returned chances are a typo has occurred or the address doesn’t exist.
+        3. The service is best used to call an address after a number and part street name are entered. Calling the service before this time will no doubt just produce rubbish candidates and put extra unwarranted load on the service.
       operationId: AutoCompleteAddress
       parameters: []
       requestBody:
@@ -1699,6 +1980,229 @@ components:
           type: string
           description: Road type (e.g. street, road, etc)
           example: PDE
+          nullable: true
+          enum:
+            -	ACCS
+            -	ALLY
+            -	ALWY
+            -	AMBL
+            -	ANCG
+            -	APP
+            -	ARC
+            -	ART
+            -	AV
+            -	AVE
+            -	BASN
+            -	BCH
+            -	BEND
+            -	BLK
+            -	BWLK
+            -	BVD
+            -	BRCE
+            -	BRAE
+            -	BRK
+            -	BDGE
+            -	BDWY
+            -	BROW
+            -	BYPA
+            -	BYWY
+            -	CAUS
+            -	CTR
+            -	CNWY
+            -	CH
+            -	CIR
+            -	CLT
+            -	CCT
+            -	CRCS
+            -	CL
+            -	CLDE
+            -	CMMN
+            -	CON
+            -	CPS
+            -	CNR
+            -	CSO
+            -	CRT
+            -	CT
+            -	CTYD
+            -	COVE
+            -	CK
+            -	CR
+            -	CRES
+            -	CRST
+            -	CRSS
+            -	CRSG
+            -	CRD
+            -	COWY
+            -	CUWY
+            -	CDS
+            -	CTTG
+            -	DALE
+            -	DELL
+            -	DEVN
+            -	DIP
+            -	DSTR
+            -	DR
+            -	DRV
+            -	DRWY
+            -	E
+            -	EDGE
+            -	ELB
+            -	END
+            -	ENT
+            -	ESP
+            -	EST
+            -	EXP
+            -	EXTN
+            -	FAWY
+            -	FAWA
+            -	FTRK
+            -	FITR
+            -	FTRL
+            -	FLAT
+            -	FOLW
+            -	FTWY
+            -	FSHR
+            -	FORM
+            -	FWY
+            -	FRNT
+            -	FRTG
+            -	GAP
+            -	GDN
+            -	GDNS
+            -	GTE
+            -	GTES
+            -	GLD
+            -	GLDE
+            -	GLEN
+            -	GRA
+            -	GRN
+            -	GRND
+            -	GR
+            -	GLY
+            -	HTS
+            -	HRD
+            -	HWY
+            -	HILL
+            -	INTG
+            -	INTN
+            -	JNC
+            -	KEY
+            -	LDG
+            -	LANE
+            -	LNWY
+            -	LEES
+            -	LINE
+            -	LINK
+            -	LT
+            -	LKT
+            -	LOOP
+            -	LWR
+            -	MALL
+            -	MNDR
+            -	MEW
+            -	MEWS
+            -	MWY
+            -	MT
+            -	MT
+            -	NOOK
+            -	N
+            -	OTLK
+            -	PDE
+            -	PARK
+            -	PKLD
+            -	PWY
+            -	PKWY
+            -	PART
+            -	PASS
+            -	PATH
+            -	PHWY
+            -	PIAZ
+            -	PL
+            -	PLAT
+            -	PLZA
+            -	PKT
+            -	PNT
+            -	PORT
+            -	PROM
+            -	QUAD
+            -	QDGL
+            -	QDRT
+            -	QY
+            -	QYS
+            -	RMBL
+            -	RAMP
+            -	RNGE
+            -	RCH
+            -	RES
+            -	REST
+            -	RTT
+            -	RIDE
+            -	RDGE
+            -	RGWY
+            -	ROWY
+            -	RING
+            -	RISE
+            -	RVR
+            -	RVWY
+            -	RVRA
+            -	RD
+            -	RDS
+            -	RDSD
+            -	RDWY
+            -	RNDE
+            -	RSBL
+            -	RTY
+            -	RND
+            -	RTE
+            -	ROW
+            -	RUE
+            -	RUN
+            -	SWY
+            -	SDNG
+            -	SLPE
+            -	SND
+            -	S
+            -	SPUR
+            -	SQ
+            -	STRS
+            -	SHWY
+            -	STPS
+            -	STRA
+            -	ST
+            -	STRP
+            -	SBWY
+            -	TARN
+            -	TCE
+            -	TER
+            -	TERR
+            -	THOR
+            -	TLWY
+            -	TOP
+            -	TOR
+            -	TWRS
+            -	TRK
+            -	TRL
+            -	TRLR
+            -	TRI
+            -	TKWY
+            -	TURN
+            -	UPAS
+            -	STE
+            -	FLAT
+            -	UPR
+            -	VALE
+            -	VDCT
+            -	VIEW
+            -	VLLS
+            -	VSTA
+            -	WADE
+            -	WALK
+            -	WKWY
+            -	WAY
+            -	W
+            -	WHRF
+            -	WYND
+            -	YARD
         Suffix:
           type: string
           description: Additional suffix in the road name (e.g. north, west, etc)
