@@ -323,6 +323,8 @@ servers:
   - url: https://uatplsp.information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/
     description: For development use this UAT endpoint
     variables: {}
+security:
+  - BasicAuth: []
 paths:
   /ValidateAddress:
     post:
@@ -5681,9 +5683,13 @@ paths:
                 $ref: '#/components/schemas/PLSPlus_AutoCompleteAddress_OutputMessage'
       deprecated: false
 components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
   schemas:
     MeshblockOption:
-      title: MeshblockOption
+      title: Meshblock Option
       description: |
         Mesh Blocks (ASGS2011) data is available (Include) for address confidenece level of 85 or greater. The option selected is case sensitive.
       enum:
@@ -5691,7 +5697,7 @@ components:
         - Exclude
       type: string
     RoadName:
-      title: RoadName
+      title: Road Name
       type: object
       properties:
         Name:
@@ -5769,7 +5775,7 @@ components:
           description: |
             A valid address or LotPlan that has no Postcode (not in AustPost delivery area) will not display a postcode attribute.
     RoadNumber:
-      title: RoadNumber
+      title: Road Number
       description: Road Number object contain the unique road number identifier
       type: object
       properties:
@@ -6334,7 +6340,7 @@ components:
           description: Survey plan number
           example: 'BUP9763'
     LocalGovernmentArea:
-      title: LocalGovernmentArea
+      title: Local Government Area
       type: object
       properties:
         Code:
@@ -6412,7 +6418,7 @@ components:
           description: Geo coordinate Longitude
           example: 153.33099322
     ArrayOfResult:
-      title: ArrayOfResult
+      title: Array Of Result
       type: object
       properties:
         Result:
@@ -6421,16 +6427,13 @@ components:
             $ref: '#/components/schemas/Result'
           description: ''
     ArrayOfResultSingle:
-      title: ArrayOfResult
+      title: Array Of Result Single
       type: object
       properties:
         Result:
-          type: object
-          items:
-            $ref: '#/components/schemas/Result'
-          description: ''
+          $ref: '#/components/schemas/Result'
     ArrayOfString:
-      title: ArrayOfString
+      title: Array Of String
       type: object
       properties:
         string:
@@ -6439,7 +6442,7 @@ components:
             type: string
           description: ''
     ArrayOfAddress:
-      title: ArrayOfAddress
+      title: Array Of Address
       type: object
       properties:
         Address:
@@ -6505,7 +6508,7 @@ components:
 
             If a locality is determined by either “alias locality” or “postcode match” the confidence reduces by 3.
     ValidateAddress:
-      title: ValidateAddress
+      title: Validate Address
       required:
         - request
       type: object
@@ -6513,7 +6516,7 @@ components:
         request:
           $ref: '#/components/schemas/ValidateAddressRequest'
     ValidateAddressRequest:
-      title: ValidateAddressRequest
+      title: Validate Address Request
       required:
         - MeshblockOption
       type: object
@@ -6562,13 +6565,13 @@ components:
           type: string
           example: '4000'
     ValidateAddressResponse:
-      title: ValidateLotPlanResponse
+      title: Validate Lot Plan Response
       type: object
       properties:
         ValidateLotPlanResult:
           $ref: '#/components/schemas/ValidateAddressResult'
     ValidateAddressResult:
-      title: ValidateAddressResult
+      title: Validate Address Result
       required:
         - ResultCount
       type: object
@@ -6582,7 +6585,7 @@ components:
             - $ref: '#/components/schemas/ArrayOfResult'
             - $ref: '#/components/schemas/ArrayOfResultSingle'
     ValidateLotPlan:
-      title: ValidateLotPlan
+      title: Validate Lot Plan
       required:
         - MeshblockOption
       type: object
@@ -6594,13 +6597,13 @@ components:
         PlanNumber:
           type: string
     ValidateLotPlanResponse:
-      title: ValidateLotPlanResponse
+      title: Validate Lot Plan Response
       type: object
       properties:
         ValidateLotPlanResult:
           $ref: '#/components/schemas/ValidateLotPlanResult'
     ValidateLotPlanResult:
-      title: ValidateLotPlanResult
+      title: Validate Lot Plan Result
       required:
         - ResultCount
       type: object
@@ -6614,7 +6617,7 @@ components:
             - $ref: '#/components/schemas/ArrayOfResult'
             - $ref: '#/components/schemas/ArrayOfResultSingle'
     ParseAddress:
-      title: ParseAddress
+      title: Parse Address
       required:
         - MeshblockOption
       type: object
@@ -6625,13 +6628,13 @@ components:
           type: string
           example: '27 PLUM PDE NERANG QLD 4211'
     ParseAddressResponse:
-      title: ParseAddressResponse
+      title: Parse Address Response
       type: object
       properties:
         ParseAddressResult:
           $ref: '#/components/schemas/ParseAddressResult'
     ParseAddressResult:
-      title: ParseAddressResult
+      title: Parse Address Result
       required:
         - ResultCount
       type: object
@@ -6645,7 +6648,7 @@ components:
             - $ref: '#/components/schemas/ArrayOfResult'
             - $ref: '#/components/schemas/ArrayOfResultSingle'
     ValidateCoordinates:
-      title: ValidateCoordinates
+      title: Validate Coordinates
       required:
         - MeshblockOption
         - Latitude
@@ -6662,7 +6665,7 @@ components:
           type: number
           example: 153.33099322
     ValidateCoordinatesResponse:
-      title: ValidateCoordinatesResponse
+      title: Validate Coordinates Response
       required:
         - ValidateCoordinatesResult
       type: object
@@ -6670,7 +6673,7 @@ components:
         ValidateCoordinatesResult:
           $ref: '#/components/schemas/ValidateCoordinatesResult'
     ValidateCoordinatesResult:
-      title: ValidateCoordinatesResult
+      title: Validate Coordinates Result
       required:
         - ResultCount
       type: object
@@ -6684,14 +6687,14 @@ components:
             - $ref: '#/components/schemas/ArrayOfResult'
             - $ref: '#/components/schemas/ArrayOfResultSingle'
     AutoCompleteAddress:
-      title: AutoCompleteAddress
+      title: Auto Complete Address
       type: object
       properties:
         request:
           type: string
           example: "27 pl"
     AutoCompleteAddressResponse:
-      title: AutoCompleteAddressResponse
+      title: Auto Complete Address Response
       type: object
       properties:
         AutoCompleteAddressResult:
