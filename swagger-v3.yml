@@ -227,10 +227,14 @@ info:
       * No confidence is displayed for ValidateLotPlan however a “Count” of 1 could be taken as valid of a confidence of 100.
       * No confidence is displayed for ValidateCoordinate operation which can, in some situations, be problematic, eg high rise building units where all geocoords from the building are projected to ground level. Meshblock information can be “Included” with the request for any service where the option is available.
 
+    ## 16) Service Definitions
+      See path functions for deetails
+
     ## 17) Response Elements
       See Schemas objects for elements and descriptions
 
     ## 18) Valid metacharacters allowed in request
+      ![Image](https://qld-gov-au.github.io/PLSplus-QG-spec/validMetaCharactersAllowedInRequest.png)
 
     ## 19) Error responses
 
