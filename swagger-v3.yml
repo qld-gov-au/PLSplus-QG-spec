@@ -15,7 +15,7 @@ info:
     There may be future enhancements, but at this stage it meets the initial specifications as an address service for point of entry confirmation of physical addressing. Any coding to ‘clean up’ returned candidate addresses needs to be performed by client applications consuming the service.
 
 
-    ## Data Source
+    ## 1) Data Source
     The Queensland Address Management Framework (QAMF) dataset is used to populate the service data source for Queenland addresses. The dataset is maintained by the Department of Natural Resources and Mines (DNRME) and updated nightly for use by client applications. Interstate addresses are provided by a third party (paid) service and use the GNAFF.
 
     The QAMF is the primary source of property location addressing information for Queensland. It is location centric, meaning that addresses can be geocoded against a variety of locations, eg centroid of the property, centroid of the street alignment, entrance of the property and the main building. It is the point of truth for addressing in Queensland and is continually maintained from data supplied by local government authorities (LGA’s).
@@ -44,7 +44,7 @@ info:
 
     Interstate addresses is sourced from The GNAF (Geocoded National Address File) which has the same Attributes minus the Plan Number of the property.
 
-    ## Functionality Available
+    ## 2) Functionality Available
 
     Under a whole of government agreement approved users may access the following PLS plus functionality for the exclusive benefit of the approved user (Licensed Purpose), free of software licensing costs&colon;
       * Address validation against the QAMF
@@ -59,7 +59,7 @@ info:
 
     Batch processing on the server side is not offered at this point in time. The Qld Geocoder application, used for batching up to 5000 addresses. LotPlans or geocodes, is available at http&colon;//geocode.information.qld.gov.au. The application requires a comma delimited (CSV) file of addresses and uses the ParseAddress, ValidateLotPlan or ValidateCoordinate operations. Full documentation is available at the above URL.Individual validations are also available with the application.
 
-    ## Support Services
+    ## 3) Support Services
 
     DNRME will supply&colon;
     * Business support&colon; described as granting access to the individual services and general business requests, and
@@ -67,10 +67,10 @@ info:
 
     Integration with applications, training and other support services within the user’s area is the responsibility of each user.
 
-    ## Service Security
+    ## 4) Service Security
     The QG versions of the service is made available to approved authenticated users, both internal to DNRME and other Queensland Government agencies.
 
-    ## Obtaining the Service
+    ## 5) Obtaining the Service
     The QG version of the service requires authentication by way of a username and password.
 
     Access to the QG service and provision of credentials can be obtained by sending a request to OpenData@dnrme.qld.gov.au and providing the following information&colon;
@@ -92,7 +92,7 @@ info:
 
      Note&colon; the user name will start with plspQr_ for QG version users.
 
-
+    ### Logging and Auditing
     Logging and auditing usage of the service helps by providing the metrics for determining requirements for enhancements to the service, infrastructure and data.
     * To ensure an accurate record of usage by applications, **please request an account for each separate project or application**.
     * **Do not pass the credentials to other staff for use in other projects or applications**.
@@ -105,16 +105,16 @@ info:
 
     Take a note of the time of the request and include it and your username in an email to OpenData@dnrme.qld.gov.au for assistance.
 
-    ## Licensing
+    ## 6) Licensing
 
     The Property Location Service Plus – QG is offered under a Creative Commons Attribution licence. To view a copy of this license visit https&colon;//creativecommons.org/licenses/by/4.0/. The Department requests attribution in the following manner&colon; Natural Resources and Mines, Queensland Government, Property Locations Service Plus - QG, licensed under Creative Commons Attribution.
 
-    ## Charging and Pricing
+    ## 7) Charging and Pricing
 
     In this release of the PLSplus-QG there is no intention to develop a charge for Government departments. If, in subsequent releases additional functionality is added, charging for the additional functionality may be considered.
 
 
-    ## Service Availability
+    ## 8) Service Availability
     <table>
       <thead>
         <tr>
@@ -146,7 +146,7 @@ info:
 
     Should the service fail outside business or technical support hours, the service may not return until the next business day.
 
-    ## PLSplus-QG at a glance
+    ## 10) PLSplus-QG at a glance
     * PLSplus is based on Addressing Standards AS AS4819 and AS4590. Users will see major changes in the schema of the responses from original Land XML format.
     * The service requires Method Type &colon;POST and Payload Type &colon;application/json
     * Postcodes (where in use) are returned with addresses.
@@ -165,239 +165,46 @@ info:
 
     Postcodes where available are supplied as part of the address response. It should be remembered that Postcodes do not form part of an address but are for Australia Post Delivery purposes. There may be some descrepancies with postcode where Australia Post has deviated from approved Locality boundaries. Please note that some parts of Qld (and Australia) do not have a postcode. In these cases the Postcode element is not included in the response.
 
-    ## Definitions of Standard Outputs
-    ### Lot and Plan Number
+    ## 10) Versions of the Property Location Service Plus
+    The PLSplus has three versions; PLSplus-Public, PLSplus-QG and PLSplus-Premium (DNRME users only). This document covers the PLSplus-QG version.
+
+    This is the Qld Government version of the service. In addition to the operations detailed in Section 12 this version of the service has failover and Interstate address validation. The inclusion of Mesh Blocks (ASGS2011) data is available for address confidence level of 85 or greater. See Sect 15 for confidence mapping.
+
+    ## 11) Elements in ParseAddress and ValidateAddress functions
+    See Schema Components for element details
+
+    ## 12) Operations available within PLSplus
+
+    The primary purpose of the Property Location Service plus is to validate uncertain or incomplete information about a parcel (identified by a street address, lot on plan description, geographic coordinate or address string).
+    This service provides the following operations&colon;
+    * ValidateAddress ^1
+    * ParseAddress ^1
+    * ValidateLotPlan ^2
+    * ValidateCoordinates ^2
+    * AutoCompleteAddress ^2
+
+    ^1 All Australian physical addresses with meshblock option (Include) are available for PLSplusQG users.
+
+    ^2 Only information relating to Qld Properties and addresses are available for these operations.
+
+    A successful validation returns other information, such as address, lot on plan, coordinates, and matching confidence level.
+
+    Tip&colon; Using the “AutoCompleteAddress” operation will always deliver a list of up to 50 valid Queensland addresses. Your application could select any of these returned addresses and be passed to ParseAddress and make use of the quick “optimistic” search.
+
+    ## 13) Definitions of Standard Outputs
+    ### 13.1) Lot and Plan Number
     The Lot and Plan Number follows the QSIIS Land Parcel Identification Standard. This standard provides a consistent method for uniquely identifying all land parcels in Queensland. In the context of this document, a parcel is understood to be a bounded area in which an interest relating to the land exists or will exist. It is also recognised that such a parcel (or bounded area) may have more than one interest associated with it. Any secondary interest (strata plans) can be validated with PLSplus.
-    ### Street Address
+    ### 13.2) Street Address
     The following table shows a mapping between the sub-elements within the Address element and the Address Details of Australian Standard AS4590 – Interchange of Client Information. AS 4590 deals with the interchange of client information - client information such as personal and addressing details - data that is routinely collected by many organisations from their customers/clients and used for contact, logistics and business activity. Address Details are shown in Section 5 of AS 4590.
 
-    ## Acceptable Abbreviations
+    ## 14) Acceptable Abbreviations
 
-    ### Road Type Abbreviations
-      Abbreviation - 	Road Name Type
-      * ACCS - 	ACCESS
-      * ALLY -	ALLEY
-      * ALWY -	ALLEYWAY
-      * AMBL -	AMBLE
-      *	ANCG -	ANCHORAGE
-      *	APP -	APPROACH
-      *	ARC -	ARCADE
-      *	ART -	ARTERY
-      *	AV -	AVENUE
-      *	AVE -	AVENUE
-      *	BASN -	BASIN
-      *	BCH -	BEACH
-      *	BEND -	BEND
-      *	BLK -	BLOCK
-      *	BWLK -	BOARDWALK
-      *	BVD -	BOULEVARD
-      *	BRCE -	BRACE
-      *	BRAE -	BRAE
-      *	BRK -	BREAK
-      *	BDGE -	BRIDGE
-      *	BDWY -	BROADWAY
-      *	BROW -	BROW
-      *	BYPA -	BYPASS
-      *	BYWY -	BYWAY
-      *	CAUS -	CAUSEWAY
-      *	CTR -	CENTRE
-      *	CNWY -	CENTREWAY
-      *	CH -	CHASE
-      *	CIR -	CIRCLE
-      *	CLT -	CIRCLET
-      *	CCT -	CIRCUIT
-      *	CRCS -	CIRCUS
-      *	CL -	CLOSE
-      *	CLDE -	COLONNADE
-      *	CMMN -	COMMON
-      *	CON -	CONCOURSE
-      *	CPS -	COPSE
-      *	CNR -	CORNER
-      *	CSO -	CORSO
-      *	CRT -	COURT
-      *	CT -	COURT
-      *	CTYD -	COURTYARD
-      *	COVE -	COVE
-      *	CK -	CREEK
-      *	CR -	CRESCENT
-      *	CRES -	CRESCENT
-      *	CRST -	CREST
-      *	CRSS -	CROSS
-      *	CRSG -	CROSSING
-      *	CRD -	CROSSROAD
-      *	COWY -	CROSSWAY
-      *	CUWY -	CRUISEWAY
-      *	CDS -	CUL-DE-SAC
-      *	CTTG -	CUTTING
-      *	DALE -	DALE
-      *	DELL -	DELL
-      *	DEVN -	DEVIATION
-      *	DIP -	DIP
-      *	DSTR -	DISTRUBUTOR
-      *	DR -	DRIVE
-      *	DRV -	DRIVE
-      *	DRWY -	DRIVEWAY
-      *	E -	EAST
-      *	EDGE -	EDGE
-      *	ELB -	ELBOW
-      *	END -	END
-      *	ENT -	ENTRANCE
-      *	ESP -	ESPLANADE
-      *	EST -	ESTATE
-      *	EXP -	EXPRESSWAY
-      *	EXTN -	EXTENSION
-      *	FAWY -	FAIRWAY
-      *	FAWA -	FAIRWAY
-      *	FTRK -	FIRE TRACK
-      *	FITR -	FIRETRAIL
-      *	FTRL -	FIRETRAIL
-      *	FLAT -	FLAT
-      *	FOLW -	FOLLOW
-      *	FTWY -	FOOTWAY
-      *	FSHR -	FORESHORE
-      *	FORM -	FORMATION
-      *	FWY -	FREEWAY
-      *	FRNT -	FRONT
-      *	FRTG -	FRONTAGE
-      *	GAP -	GAP
-      *	GDN -	GARDEN
-      *	GDNS -	GARDENS
-      *	GTE -	GATE
-      *	GTES -	GATES
-      *	GLD -	GLADE
-      *	GLDE -	GLADE
-      *	GLEN -	GLEN
-      *	GRA -	GRANGE
-      *	GRN -	GREEN
-      *	GRND -	GROUND
-      *	GR -	GROVE
-      *	GLY -	GULLY
-      *	HTS -	HEIGHTS
-      *	HRD -	HIGHROAD
-      *	HWY -	HIGHWAY
-      *	HILL -	HILL
-      *	INTG -	INTERCHANGE
-      *	INTN -	INTERSECTION
-      *	JNC -	JUNCTION
-      *	KEY -	KEY
-      *	LDG -	LANDING
-      *	LANE -	LANE
-      *	LNWY -	LANEWAY
-      *	LEES -	LEES
-      *	LINE -	LINE
-      *	LINK -	LINK
-      *	LT -	LITTLE
-      *	LKT -	LOOKOUT
-      *	LOOP -	LOOP
-      *	LWR -	LOWER
-      *	MALL -	MALL
-      *	MNDR -	MEANDER
-      *	MEW -	MEW
-      *	MEWS -	MEWS
-      *	MWY -	MOTORWAY
-      *	MT -	MOUNT
-      *	MT -	MOUNT
-      *	NOOK -	NOOK
-      *	N -	NORTH
-      *	OTLK -	OUTLOOK
-      *	PDE -	PARADE
-      *	PARK -	PARK
-      *	PKLD -	PARKLANDS
-      *	PWY -	PARKWAY
-      *	PKWY -	PARKWAY
-      *	PART -	PART
-      *	PASS -	PASS
-      *	PATH -	PATH
-      *	PHWY -	PATHWAY
-      *	PIAZ -	PIAZZA
-      *	PL -	PLACE
-      *	PLAT -	PLATEAU
-      *	PLZA -	PLAZA
-      *	PKT -	POCKET
-      *	PNT -	POINT
-      *	PORT -	PORT
-      *	PROM -	PROMENADE
-      *	QUAD -	QUAD
-      *	QDGL -	QUADRANGLE
-      *	QDRT -	QUADRANT
-      *	QY -	QUAY
-      *	QYS -	QUAYS
-      *	RMBL -	RAMBLE
-      *	RAMP -	RAMP
-      *	RNGE -	RANGE
-      *	RCH -	REACH
-      *	RES -	RESERVE
-      *	REST -	REST
-      *	RTT -	RETREAT
-      *	RIDE -	RIDE
-      *	RDGE -	RIDEG
-      *	RGWY -	RIDGEWAY
-      *	ROWY -	RIGHT OF WAY
-      *	RING -	RING
-      *	RISE -	RISE
-      *	RVR -	RIVER
-      *	RVWY -	RIVERWAY
-      *	RVRA -	RIVIERA
-      *	RD -	ROAD
-      *	RDS -	ROADS
-      *	RDSD -	ROADSIDE
-      *	RDWY -	ROADWAY
-      *	RNDE -	RONDE
-      *	RSBL -	ROSEBOWL
-      *	RTY -	ROTARY
-      *	RND -	ROUND
-      *	RTE -	ROUTE
-      *	ROW -	ROW
-      *	RUE -	RUE
-      *	RUN -	RUN
-      *	SWY -	SERVICE WAY
-      *	SDNG -	SIDING
-      *	SLPE -	SLOPE
-      *	SND -	SOUND
-      *	S -	SOUTH
-      *	SPUR -	SPUR
-      *	SQ -	SQUARE
-      *	STRS -	STAIRS
-      *	SHWY -	STATE HIGHWAY
-      *	STPS -	STEPS
-      *	STRA -	STRAND
-      *	ST -	STREET
-      *	STRP -	STRIP
-      *	SBWY -	SUBWAY
-      *	TARN -	TARN
-      *	TCE -	TERRACE
-      *	TER -	TERRACE
-      *	TERR -	TERRACE
-      *	THOR -	THOROUGHFARE
-      *	TLWY -	TOLLWAY
-      *	TOP -	TOP
-      *	TOR -	TOR
-      *	TWRS -	TOWERS
-      *	TRK -	TRACK
-      *	TRL -	TRAIL
-      *	TRLR -	TRAILER
-      *	TRI -	TRIANGLE
-      *	TKWY -	TRUNKWAY
-      *	TURN -	TURN
-      *	UPAS -	UNDERPASS
-      *	STE -	UNIT
-      *	FLAT -	UNIT
-      *	UPR -	UPPER
-      *	VALE -	VALE
-      *	VDCT -	VIADUCT
-      *	VIEW -	VIEW
-      *	VLLS -	VILLAS
-      *	VSTA -	VISTA
-      *	WADE -	WADE
-      *	WALK -	WALK
-      *	WKWY -	WALKWAY
-      *	WAY -	WAY
-      *	W -	WEST
-      *	WHRF -	WHARF
-      *	WYND -	WYND
-      *	YARD -	YARD
+    ### 14.1) Road Type Abbreviations
+      See Component `Road` -> `TypeCode` for full list in its description
 
-    ###Acceptable State Names and Abbreviations
+      TypeCode is the Abbreviation
+
+    ### 14.2) Acceptable State Names and Abbreviations
       Only the correct spelling is assumed and only these combinations (case sensitive) below&colon;
       * Australian Antarctic Territory – `AAT`, `A A T`
       * Australian Capital Territory – `ACT`, `A C T`
@@ -415,22 +222,93 @@ info:
       3. Do not use a full stop “.” in any abbreviation.
       4. Postcode can form part of an address.
 
-    ## Confidence Level
+    ## 15) Confidence Level
       The Confidence Level is a value between 0 – 100 returned in the response for ValidateAddress and ParseAddress requests. It gives the user an understanding of the validity of the requested address. In the response the element name is “Confidence” and it is a value that represents the categories listed in Section 11.3.
       * No confidence is displayed for ValidateLotPlan however a “Count” of 1 could be taken as valid of a confidence of 100.
       * No confidence is displayed for ValidateCoordinate operation which can, in some situations, be problematic, eg high rise building units where all geocoords from the building are projected to ground level. Meshblock information can be “Included” with the request for any service where the option is available.
 
-    ## Some example errors
-      1. **Service Not Available*8
-      Response is given if a component of the service is unavailable or there is an unexpected system failure.
+    ## 17) Response Elements
+      See Schemas objects for elements and descriptions
+
+    ## 18) Valid metacharacters allowed in request
+
+    ## 19) Error responses
+
+    ### 19.1) Errors
+    All errors for all operations will be wrapped in the JSON element. Faults contain the below elements
+
+    <table><thead>
+    <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+    </thead><tbody>
+    <tr><td>reference id</td><td>String</td><td>Id that can be referenced in an incident ticket to aid the support team in identifying the cause of the error</td></tr>
+    <tr><td>faultCode</td><td>String</td><td>Fault code (e.g. InvalidRequest)</td></tr>
+    <tr><td>faultString</td><td>String</td><td>Fault message</td></tr>
+    <tr><td>time</td><td>String</td><td>Time the error occurred</td></tr>
+    </tbody></table>
+
+    The following outlines the errors associated with each of the HTTP Response Code HTTP 200
+
+    For errors returned with a HTTP 200 status, the JSON response payload will contain the below elements.
+
+    * Type - Description
+    * `InvalidRequest` - Occurs when one or multiple fields contain invalid data. Refer to the faultString for the specific field that’s causing the error.
+    * `ValidationError` - Occurs when payload is missing a required element
+
+
+
+    ### 19.2) Fault (HTTP) Codes
+    The following highlights other HTTP codes and the possible causes behind the errors. These errors are returned from the transport layer
+      * Code - Description
+      * `400` - Returned when fields in the JSON payload is incorrectly defined
+      * `401` - Returned due to unauthorised access to the service
+      * `403` - Returned due to not having enough privileges accessing the
+      service. Contact the OpenData if you believe this is incorrect.
+      * `404` - Resource not found
+      * `405` - Request method type is not allowed. All RESTful operations only allow the HTML POST method
+      * `415` - Request payload media type is invalid. All RESTful operations only allow application/json as the media type
+      * `422` - An unexpected error occurred on the server. Contact OpenData with the referenceId to further investigation
+      * `500` - This error occurred due to the request not conforming to the request format and an error such as an InvalidRequest or
+      ValidationError is returned.
+      * `503` - The underlying system is unavailable. Contact OpenData with the
+      massage id and the time of the error will allow OpenData to diagnose the issue
+
+      1. **Service Not Available**
+
+         Response is given if a component of the operation is unavailable or there is an unexpected system failure.
+
+      2. **The requested operation was rejected + Message**
+
+         Response is returned if the any of the elements are outside of the following parameters 0-9, A-Z, &, /, (, ), ‘, -, #
+          * No wildcards can be used
+
+      3. **Lot Number Invalid shown as**
+          "faultCode"&colon; "InvalidRequest", <br/>
+          "faultString"&colon; "Lot Number Invalid",
+
+          Response is returned if the lot number is either null or does not match with the plan number
+
+      4. **Plan Number Invalid**
+
+          "faultCode"&colon; "InvalidRequest",<br/>
+          "faultString"&colon; "Plan Number Invalid",
+
+          Response is given when the plan number uses any characters outside A-Z and 0-9 .
+
+    ### Some example errors
+      1. **Service Not Available**
+
+         Response is given if a component of the service is unavailable or there is an unexpected system failure.
       2. **InvalidRequest + Message** (“This request was rejected due to a violation.....)
-      <br/>Response is returned if the any of the elements are outside of the following parameters 0-9, A-Z, &, /, (, ), ‘, -, # See allowed Metadata Character valid list
-        * No wildcards can be used.
-        * The message may contain “Street Name”, “Locality” or “Local Government” invalid’.
+
+         Response is returned if the any of the elements are outside of the following parameters 0-9, A-Z, &, /, (, ), ‘, -, # See allowed Metadata Character valid list
+            * No wildcards can be used.
+            * The message may contain “Street Name”, “Locality” or “Local Government” invalid’.
       3. **No Matches found**
-      <br/>A “ResultCount”&colon; “0” means no matches were found
+
+          A “ResultCount”&colon; “0” means no matches were found
       4. **Too Many Results**
-      <br/>Response is given when the request returns more than 500 responses.
+
+         Response is given when the request returns more than 500 responses.
 
   contact: {}
   version: '1.0'
@@ -1978,7 +1856,230 @@ components:
           example: Plum
         TypeCode:
           type: string
-          description: Road type (e.g. street, road, etc)
+          description: |
+            Road type Code to Full name (e.g. ST = street, RD = road, etc)
+            * `ACCS` - ACCESS
+            * `ALLY` - ALLEY
+            * `ALWY` - ALLEYWAY
+            * `AMBL` - AMBLE
+            * `ANCG` - ANCHORAGE
+            * `APP` - APPROACH
+            * `ARC` - ARCADE
+            * `ART` - ARTERY
+            * `AV` - AVENUE
+            * `AVE` - AVENUE
+            * `BASN` - BASIN
+            * `BCH` - BEACH
+            * `BEND` - BEND
+            * `BLK` - BLOCK
+            * `BWLK` - BOARDWALK
+            * `BVD` - BOULEVARD
+            * `BRCE` - BRACE
+            * `BRAE` - BRAE
+            * `BRK` - BREAK
+            * `BDGE` - BRIDGE
+            * `BDWY` - BROADWAY
+            * `BROW` - BROW
+            * `BYPA` - BYPASS
+            * `BYWY` - BYWAY
+            * `CAUS` - CAUSEWAY
+            * `CTR` - CENTRE
+            * `CNWY` - CENTREWAY
+            * `CH` - CHASE
+            * `CIR` - CIRCLE
+            * `CLT` - CIRCLET
+            * `CCT` - CIRCUIT
+            * `CRCS` - CIRCUS
+            * `CL` - CLOSE
+            * `CLDE` - COLONNADE
+            * `CMMN` - COMMON
+            * `CON` - CONCOURSE
+            * `CPS` - COPSE
+            * `CNR` - CORNER
+            * `CSO` - CORSO
+            * `CRT` - COURT
+            * `CT` - COURT
+            * `CTYD` - COURTYARD
+            * `COVE` - COVE
+            * `CK` - CREEK
+            * `CR` - CRESCENT
+            * `CRES` - CRESCENT
+            * `CRST` - CREST
+            * `CRSS` - CROSS
+            * `CRSG` - CROSSING
+            * `CRD` - CROSSROAD
+            * `COWY` - CROSSWAY
+            * `CUWY` - CRUISEWAY
+            * `CDS` - CUL-DE-SAC
+            * `CTTG` - CUTTING
+            * `DALE` - DALE
+            * `DELL` - DELL
+            * `DEVN` - DEVIATION
+            * `DIP` - DIP
+            * `DSTR` - DISTRUBUTOR
+            * `DR` - DRIVE
+            * `DRV` - DRIVE
+            * `DRWY` - DRIVEWAY
+            * `E` - EAST
+            * `EDGE` - EDGE
+            * `ELB` - ELBOW
+            * `END` - END
+            * `ENT` - ENTRANCE
+            * `ESP` - ESPLANADE
+            * `EST` - ESTATE
+            * `EXP` - EXPRESSWAY
+            * `EXTN` - EXTENSION
+            * `FAWY` - FAIRWAY
+            * `FAWA` - FAIRWAY
+            * `FTRK` - FIRE TRACK
+            * `FITR` - FIRETRAIL
+            * `FTRL` - FIRETRAIL
+            * `FLAT` - FLAT
+            * `FOLW` - FOLLOW
+            * `FTWY` - FOOTWAY
+            * `FSHR` - FORESHORE
+            * `FORM` - FORMATION
+            * `FWY` - FREEWAY
+            * `FRNT` - FRONT
+            * `FRTG` - FRONTAGE
+            * `GAP` - GAP
+            * `GDN` - GARDEN
+            * `GDNS` - GARDENS
+            * `GTE` - GATE
+            * `GTES` - GATES
+            * `GLD` - GLADE
+            * `GLDE` - GLADE
+            * `GLEN` - GLEN
+            * `GRA` - GRANGE
+            * `GRN` - GREEN
+            * `GRND` - GROUND
+            * `GR` - GROVE
+            * `GLY` - GULLY
+            * `HTS` - HEIGHTS
+            * `HRD` - HIGHROAD
+            * `HWY` - HIGHWAY
+            * `HILL` - HILL
+            * `INTG` - INTERCHANGE
+            * `INTN` - INTERSECTION
+            * `JNC` - JUNCTION
+            * `KEY` - KEY
+            * `LDG` - LANDING
+            * `LANE` - LANE
+            * `LNWY` - LANEWAY
+            * `LEES` - LEES
+            * `LINE` - LINE
+            * `LINK` - LINK
+            * `LT` - LITTLE
+            * `LKT` - LOOKOUT
+            * `LOOP` - LOOP
+            * `LWR` - LOWER
+            * `MALL` - MALL
+            * `MNDR` - MEANDER
+            * `MEW` - MEW
+            * `MEWS` - MEWS
+            * `MWY` - MOTORWAY
+            * `MT` - MOUNT
+            * `MT` - MOUNT
+            * `NOOK` - NOOK
+            * `N` - NORTH
+            * `OTLK` - OUTLOOK
+            * `PDE` - PARADE
+            * `PARK` - PARK
+            * `PKLD` - PARKLANDS
+            * `PWY` - PARKWAY
+            * `PKWY` - PARKWAY
+            * `PART` - PART
+            * `PASS` - PASS
+            * `PATH` - PATH
+            * `PHWY` - PATHWAY
+            * `PIAZ` - PIAZZA
+            * `PL` - PLACE
+            * `PLAT` - PLATEAU
+            * `PLZA` - PLAZA
+            * `PKT` - POCKET
+            * `PNT` - POINT
+            * `PORT` - PORT
+            * `PROM` - PROMENADE
+            * `QUAD` - QUAD
+            * `QDGL` - QUADRANGLE
+            * `QDRT` - QUADRANT
+            * `QY` - QUAY
+            * `QYS` - QUAYS
+            * `RMBL` - RAMBLE
+            * `RAMP` - RAMP
+            * `RNGE` - RANGE
+            * `RCH` - REACH
+            * `RES` - RESERVE
+            * `REST` - REST
+            * `RTT` - RETREAT
+            * `RIDE` - RIDE
+            * `RDGE` - RIDEG
+            * `RGWY` - RIDGEWAY
+            * `ROWY` - RIGHT OF WAY
+            * `RING` - RING
+            * `RISE` - RISE
+            * `RVR` - RIVER
+            * `RVWY` - RIVERWAY
+            * `RVRA` - RIVIERA
+            * `RD` - ROAD
+            * `RDS` - ROADS
+            * `RDSD` - ROADSIDE
+            * `RDWY` - ROADWAY
+            * `RNDE` - RONDE
+            * `RSBL` - ROSEBOWL
+            * `RTY` - ROTARY
+            * `RND` - ROUND
+            * `RTE` - ROUTE
+            * `ROW` - ROW
+            * `RUE` - RUE
+            * `RUN` - RUN
+            * `SWY` - SERVICE WAY
+            * `SDNG` - SIDING
+            * `SLPE` - SLOPE
+            * `SND` - SOUND
+            * `S` - SOUTH
+            * `SPUR` - SPUR
+            * `SQ` - SQUARE
+            * `STRS` - STAIRS
+            * `SHWY` - STATE HIGHWAY
+            * `STPS` - STEPS
+            * `STRA` - STRAND
+            * `ST` - STREET
+            * `STRP` - STRIP
+            * `SBWY` - SUBWAY
+            * `TARN` - TARN
+            * `TCE` - TERRACE
+            * `TER` - TERRACE
+            * `TERR` - TERRACE
+            * `THOR` - THOROUGHFARE
+            * `TLWY` - TOLLWAY
+            * `TOP` - TOP
+            * `TOR` - TOR
+            * `TWRS` - TOWERS
+            * `TRK` - TRACK
+            * `TRL` - TRAIL
+            * `TRLR` - TRAILER
+            * `TRI` - TRIANGLE
+            * `TKWY` - TRUNKWAY
+            * `TURN` - TURN
+            * `UPAS` - UNDERPASS
+            * `STE` - UNIT
+            * `FLAT` - UNIT
+            * `UPR` - UPPER
+            * `VALE` - VALE
+            * `VDCT` - VIADUCT
+            * `VIEW` - VIEW
+            * `VLLS` - VILLAS
+            * `VSTA` - VISTA
+            * `WADE` - WADE
+            * `WALK` - WALK
+            * `WKWY` - WALKWAY
+            * `WAY` - WAY
+            * `W` - WEST
+            * `WHRF` - WHARF
+            * `WYND` - WYND
+            * `YARD` - YARD
+
           example: PDE
           nullable: true
           enum:
