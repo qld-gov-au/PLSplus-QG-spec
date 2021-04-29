@@ -1623,55 +1623,6 @@ paths:
       deprecated: false
 components:
   schemas:
-    ValidateAddress:
-      title: ValidateAddress
-      required:
-        - MeshblockOption
-      type: object
-      properties:
-        MeshblockOption:
-          $ref: '#/components/schemas/MeshblockOption'
-        LevelType:
-          type: string
-          description: Alpha or numeric identifier
-          example: 'L'
-        LevelNumber:
-          type: string
-          example: 'D'
-        UnitType:
-          type: string
-          example: 'Unit'
-        UnitNumber:
-          type: string
-          example: '201'
-        BuildingName:
-          type: string
-          example: ''
-        NumberFirst:
-          type: string
-          example: '160'
-        NumberSuffixFirst:
-          type: string
-          example: ''
-        NumberLast:
-          type: string
-          example: ''
-        NumberSuffixLast:
-          type: string
-          example: ''
-        Road:
-          $ref: '#/components/schemas/RoadName'
-        LocalityName:
-          type: string
-          example: 'TOWNSVILLE'
-        LocalGovernmentName:
-          type: string
-        StateName:
-          type: string
-          example: 'QLD'
-        PostCode:
-          type: string
-          example: '4000'
     MeshblockOption:
       title: MeshblockOption
       description: |
@@ -1693,83 +1644,6 @@ components:
         Suffix:
           type: string
           example: ''
-    ValidateAddressResponse:
-      title: ValidateAddressResponse
-      required:
-        - ResultCount
-      type: object
-      properties:
-        ResultCount:
-          type: integer
-          format: int32
-        Results:
-          $ref: '#/components/schemas/ArrayOfResult'
-    ArrayOfResult:
-      title: ArrayOfResult
-      type: object
-      properties:
-        Result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Result'
-          description: ''
-    Result:
-      title: Result
-      type: object
-      properties:
-        PhysicalAddressIndicator:
-          type: string
-        MetaData:
-          type: array
-          items:
-            $ref: '#/components/schemas/MetaData'
-          description: ''
-        Address:
-          $ref: '#/components/schemas/Address'
-        Parcel:
-          $ref: '#/components/schemas/Parcel'
-        LocalGovernmentArea:
-          $ref: '#/components/schemas/LocalGovernmentArea'
-        Geocode:
-          type: array
-          items:
-            $ref: '#/components/schemas/Geocode'
-          description: ''
-        Aliases:
-          $ref: '#/components/schemas/ArrayOfAddress'
-        Confidence:
-          type: integer
-          format: int32
-          example: 100
-          description: |
-            Each address has a corresponding confidence that gives an indication of the closeness of match from request to response.
-            Confidence Level
-
-            * `0`   - No Confidence
-            * `5`   - To State
-            * `10`  - To Local Government (Sounds Like)
-            * `15`  - To Local Government (Exact Match)
-            * `20`  - To Locality (Sounds Like)
-            * `25`  - To Locality (Exact Match)
-            * `50`  - Indistinct Local Government / Postcode
-            * `60`  - Indistinct Locality 55 Indistinct Street/Place Name
-            * `70`  - Indistinct Street Number 65 To Street/Place Name (Sounds Like)
-            * `75`  - To Street/Place Name (Exact Match)
-            * `80`  - Indistinct Unit Type
-            * `85`  - To Street Number (Sounds Like)
-            * `87`  - To Street Number (Exact Match)
-            * `89`  - Indistinct Unit/Level Number (Sounds Like)
-            * `90`  - Indistinct Unit/Level Number (Exact Match)
-            * `93`  - To Street Type (Sounds Like)
-            * `94`  - To Street Type (Exact Match)
-            * `95`  - Street Number Falls Within a Range (Sounds Like)
-            * `96`  - Street Number Falls Within a Range (Exact Match)
-            * `97`  - Valid Incomplete (Sounds Like)
-            * `98`  - Valid Incomplete (Exact Match)
-            * `99`  - Valid Address (Sounds Like)
-            * `100` - Valid Address (Exact Match)
-
-            If a locality is determined by either “alias locality” or “postcode match” the confidence reduces by 3.
     MetaData:
       title: MetaData
       description: |
@@ -2208,7 +2082,6 @@ components:
             -	MEWS
             -	MWY
             -	MT
-            -	MT
             -	NOOK
             -	N
             -	OTLK
@@ -2293,7 +2166,6 @@ components:
             -	TURN
             -	UPAS
             -	STE
-            -	FLAT
             -	UPR
             -	VALE
             -	VDCT
@@ -2462,7 +2334,6 @@ components:
             - EF
             - EAS
             - FC
-            - FC
             - FCS
             - FDA
             - LB
@@ -2481,6 +2352,24 @@ components:
           type: number
           description: Geo coordinate Longitude
           example: 153.33099322
+    ArrayOfResult:
+      title: ArrayOfResult
+      type: object
+      properties:
+        Result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+          description: ''
+    ArrayOfString:
+      title: ArrayOfString
+      type: object
+      properties:
+        string:
+          type: array
+          items:
+            type: string
+          description: ''
     ArrayOfAddress:
       title: ArrayOfAddress
       type: object
@@ -2490,6 +2379,123 @@ components:
           items:
             $ref: '#/components/schemas/Address'
           description: ''
+    Result:
+      title: Result
+      type: object
+      properties:
+        PhysicalAddressIndicator:
+          type: string
+        MetaData:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetaData'
+          description: ''
+        Address:
+          $ref: '#/components/schemas/Address'
+        Parcel:
+          $ref: '#/components/schemas/Parcel'
+        LocalGovernmentArea:
+          $ref: '#/components/schemas/LocalGovernmentArea'
+        Geocode:
+          type: array
+          items:
+            $ref: '#/components/schemas/Geocode'
+          description: ''
+        Aliases:
+          $ref: '#/components/schemas/ArrayOfAddress'
+        Confidence:
+          type: integer
+          format: int32
+          example: 100
+          description: |
+            Each address has a corresponding confidence that gives an indication of the closeness of match from request to response.
+            Confidence Level
+
+            * `0`   - No Confidence
+            * `5`   - To State
+            * `10`  - To Local Government (Sounds Like)
+            * `15`  - To Local Government (Exact Match)
+            * `20`  - To Locality (Sounds Like)
+            * `25`  - To Locality (Exact Match)
+            * `50`  - Indistinct Local Government / Postcode
+            * `60`  - Indistinct Locality 55 Indistinct Street/Place Name
+            * `70`  - Indistinct Street Number 65 To Street/Place Name (Sounds Like)
+            * `75`  - To Street/Place Name (Exact Match)
+            * `80`  - Indistinct Unit Type
+            * `85`  - To Street Number (Sounds Like)
+            * `87`  - To Street Number (Exact Match)
+            * `89`  - Indistinct Unit/Level Number (Sounds Like)
+            * `90`  - Indistinct Unit/Level Number (Exact Match)
+            * `93`  - To Street Type (Sounds Like)
+            * `94`  - To Street Type (Exact Match)
+            * `95`  - Street Number Falls Within a Range (Sounds Like)
+            * `96`  - Street Number Falls Within a Range (Exact Match)
+            * `97`  - Valid Incomplete (Sounds Like)
+            * `98`  - Valid Incomplete (Exact Match)
+            * `99`  - Valid Address (Sounds Like)
+            * `100` - Valid Address (Exact Match)
+
+            If a locality is determined by either “alias locality” or “postcode match” the confidence reduces by 3.
+    ValidateAddress:
+      title: ValidateAddress
+      required:
+        - MeshblockOption
+      type: object
+      properties:
+        MeshblockOption:
+          $ref: '#/components/schemas/MeshblockOption'
+        LevelType:
+          type: string
+          description: Alpha or numeric identifier
+          example: 'L'
+        LevelNumber:
+          type: string
+          example: 'D'
+        UnitType:
+          type: string
+          example: 'Unit'
+        UnitNumber:
+          type: string
+          example: '201'
+        BuildingName:
+          type: string
+          example: ''
+        NumberFirst:
+          type: string
+          example: '160'
+        NumberSuffixFirst:
+          type: string
+          example: ''
+        NumberLast:
+          type: string
+          example: ''
+        NumberSuffixLast:
+          type: string
+          example: ''
+        Road:
+          $ref: '#/components/schemas/RoadName'
+        LocalityName:
+          type: string
+          example: 'TOWNSVILLE'
+        LocalGovernmentName:
+          type: string
+        StateName:
+          type: string
+          example: 'QLD'
+        PostCode:
+          type: string
+          example: '4000'
+    ValidateAddressResponse:
+      title: ValidateAddressResponse
+      required:
+        - ResultCount
+      type: object
+      properties:
+        ResultCount:
+          type: integer
+          format: int32
+        Results:
+          $ref: '#/components/schemas/ArrayOfResult'
     ValidateLotPlan:
       title: ValidateLotPlan
       required:
@@ -2576,15 +2582,6 @@ components:
       properties:
         AutoCompleteAddressResult:
           $ref: '#/components/schemas/ArrayOfString'
-    ArrayOfString:
-      title: ArrayOfString
-      type: object
-      properties:
-        string:
-          type: array
-          items:
-            type: string
-          description: ''
     PLSPlus_AutoCompleteAddress_InputMessage:
       title: PLSPlus_AutoCompleteAddress_InputMessage
       required:
