@@ -52,7 +52,7 @@
         <owasp.dependency-check-maven.version>6.1.6</owasp.dependency-check-maven.version>
         <spotbugs-maven-plugin.version>4.2.3</spotbugs-maven-plugin.version>
         <spotbugs.version>3.1.12</spotbugs.version>
-        <findsecbugs-plugin.version>1.10.1</findsecbugs-plugin.version>
+        <findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
         <sb-contrib.version>7.4.7</sb-contrib.version>
 
         <failsafe.skip>false</failsafe.skip>
