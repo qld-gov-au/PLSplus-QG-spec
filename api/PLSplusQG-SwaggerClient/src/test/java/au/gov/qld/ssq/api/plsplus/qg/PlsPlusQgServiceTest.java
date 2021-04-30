@@ -1,7 +1,6 @@
 package au.gov.qld.ssq.api.plsplus.qg;
 
 import au.gov.qld.ssq.api.plsplus.qg.handler.ApiException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Ignore
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {PlsPlusQgConfig.class, PlsPlusQgService.class},

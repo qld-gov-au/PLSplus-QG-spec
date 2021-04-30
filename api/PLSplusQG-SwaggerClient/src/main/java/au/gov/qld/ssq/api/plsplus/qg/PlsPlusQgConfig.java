@@ -6,11 +6,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PlsPlusQgConfig {
 
-    @Value(value = "${integrationPoints.plsplusqg.url:#{null}}")
+    @Value(value = "${integration-points.plsplusqg.url:#{null}}")
     private String url;
-    @Value(value = "${integrationPoints.plsplusqg.username:#{null}}")
+    @Value(value = "${integration-points.plsplusqg.username:#{null}}")
     private String username;
-    @Value(value = "${integrationPoints.plsplusqg.password:#{null}}")
+    @Value(value = "${integration-points.plsplusqg.password:#{null}}")
     private String password;
 
     public String getUrl() {

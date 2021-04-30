@@ -2,3 +2,5 @@ gen
 .idea
 target
 *.iml
+#block username/password file going into public github this file is dynamically built by github actions from repo secrets
+api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
