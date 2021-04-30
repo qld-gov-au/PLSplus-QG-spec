@@ -34,7 +34,7 @@ jobs:
       - run: |
          mkdir staging
          cp api/PLSplusQG-SwaggerClient/target/*.jar staging
-         cp api/PLSplusQG-SwaggerClient/target/generated-sources/swagger/docs staging
+         cp -r api/PLSplusQG-SwaggerClient/target/generated-sources/swagger/docs staging
       - uses: actions/upload-artifact@v2
         with:
           name: Package
