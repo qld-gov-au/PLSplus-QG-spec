@@ -89,7 +89,7 @@
 
             <!-- ########## Test dependencies ########## -->
 
-            <dependency><scope>test</scope><groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.1</version></dependency>
+            <dependency><scope>test</scope><groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version></dependency>
 
             <dependency><scope>test</scope><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><version>3.10.0</version></dependency>
 
