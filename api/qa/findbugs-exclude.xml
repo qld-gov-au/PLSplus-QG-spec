@@ -1,0 +1,87 @@
+<FindBugsFilter>
+    <Match>
+        <!-- We don't care that much about serialization -->
+        <!-- Replacing whitespace manually on every log invocation isn't feasible; maybe implement custom layout? -->
+        <Bug pattern="SE_NO_SERIALVERSIONID,SE_BAD_FIELD,CRLF_INJECTION_LOGS"/>
+    </Match>
+    <Match>
+        <Class name="~au\.gov\.qld\.ssq\.seniors\.web\.FeedbackConfigurationInterceptor(Test)?"/>
+        <Bug pattern="SERVLET_SERVER_NAME,SERVLET_QUERY_STRING,SERVLET_HEADER_USER_AGENT,SERVLET_HEADER_REFERER"/>
+    </Match>
+    <Match>
+        <!-- Some fb-contrib filters just aren't production-grade -->
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS,EXS_EXCEPTION_SOFTENING_NO_CHECKED,WEM_WEAK_EXCEPTION_MESSAGING,OPM_OVERLY_PERMISSIVE_METHOD"/>
+    </Match>
+    <Match>
+        <!-- Mockito initialises fields through reflection -->
+        <!-- No need to micro-optimise test performance -->
+        <!-- Tests don't need security checks (eg encrypted sockets) -->
+        <Or>
+            <Class name="~au\.gov\.qld\.ssq\..*Test$"/>
+            <Class name="~au\.gov\.qld\.ssq\..*Page$"/>
+            <Package name="au.gov.qld.ssq.seniors.scenario.selenium.pages"/>
+            <Package name="au.gov.qld.ssq.seniors.scenario"/>
+        </Or>
+        <Bug category="PERFORMANCE,SECURITY" pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+    </Match>
+
+    <Match>
+        <Or>
+            <Package name="au.gov.qld.transport.ip"/>
+            <Package name="au.gov.qld.transport.rg"/>
+        </Or>
+        <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+    </Match>
+    <Match>
+        <Or>
+            <Package name="au.gov.qld.ssq.invoker"/>
+        </Or>
+        <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>
+    </Match>
+    <!-- Classes that don't represent state don't need some methods -->
+    <Match>
+        <Or>
+            <Class name="~au\.gov\.qld\.ssq\..*Test$"/>
+            <Class name="~au\.gov\.qld\.ssq\..*Page$"/>
+            <Package name="~au\.gov\.qld\.ssq\..*\.scenario"/>
+        </Or>
+        <Bug pattern="IMC_IMMATURE_CLASS_NO_EQUALS,IMC_IMMATURE_CLASS_NO_TOSTRING"/>
+    </Match>
+    <Match>
+        <Package name="~au\.gov\.qld\.ssq\..*\.scenario\.selenium\.pages"/>
+        <Bug pattern="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE"/>
+    </Match>
+    <Match>
+        <!-- Controller attributes, if any, are from trusted sources or are sanitised -->
+        <Or>
+            <Class name="~au\.gov\.qld\.ssq\..*\.web\..*Controller$"/>
+        </Or>
+        <Bug pattern="SPRING_ENDPOINT"/>
+    </Match>
+
+
+
+    <Match>
+        <!-- Autowiring -->
+        <Package name="~au\.gov\.qld\.ssq\..*\.config$"/>
+        <Bug pattern="FCBL_FIELD_COULD_BE_LOCAL"/>
+    </Match>
+
+
+    <Match>
+        <!-- Selenium tests typically have assertions behind the scenes -->
+        <Package name="~au\.gov\.qld\.ssq\..*\.scenario\.selenium$"/>
+        <Bug pattern="UTAO_JUNIT_ASSERTION_ODDITIES_NO_ASSERT"/>
+    </Match>
+    <Match>
+        <!-- Page objects are allowed to be crssq-linked -->
+        <Class name="~au\.gov\.qld\.ssq\..*Page$"/>
+        <Bug pattern="CD_CIRCULAR_DEPENDENCY"/>
+    </Match>
+
+    <!-- Workaround for Cobertura generated classes -->
+    <Match>
+        <Field name="__cobertura_counters"/>
+    </Match>
+
+</FindBugsFilter>

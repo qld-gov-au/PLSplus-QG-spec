@@ -1,0 +1,19 @@
+---
+#spring.config.import: classpath:application-testResources.yml,classpath:application-defaults.yml
+
+server.port: 3000
+
+management.endpoints.enabled-by-default: true
+
+logging:
+  level:
+    root: WARN
+    #org.springframework: DEBUG
+    org.springframework.web: WARN
+    guru.springframework.controllers: WARN
+    au.gov.qld.qss: TRACE
+
+integrationPoints:
+  plsplusqg:
+    username: "${PLS_USERNAME}"
+    password: "${PLS_PASSWORD}"

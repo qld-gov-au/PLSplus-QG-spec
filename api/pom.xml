@@ -1,0 +1,291 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>au.gov.qld.ssq.api</groupId>
+    <artifactId>swagger_parent</artifactId>
+    <packaging>pom</packaging>
+    <version>2021.04.0.0</version>
+
+    <name>API Interface Parent</name>
+
+    <modules>
+        <module>PLSplusQG-SwaggerClient</module>
+    </modules>
+
+    <scm>
+        <url>https://github.com/qld-gov-au/PLSplus-QG-spec</url>
+        <connection>scm:git:https://github.com/qld-gov-au/PLSplus-QG-spec.git</connection>
+        <developerConnection>scm:git:https://github.com/qld-gov-au/PLSplus-QG-spec.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+        <git-commit-id-plugin.version>4.0.4</git-commit-id-plugin.version>
+
+        <config.directory>${project.basedir}/qa</config.directory>
+        <qa.directory>qa</qa.directory>
+
+        <osssio.encryption.utils.version>1.5</osssio.encryption.utils.version>
+
+        <swagger-codegen-maven-plugin.version>3.0.25</swagger-codegen-maven-plugin.version>
+        <swagger-annotations.version>2.1.9</swagger-annotations.version>
+        <jackson.version>2.12.3</jackson.version>
+        <jersey.version>2.29.1</jersey.version>
+
+
+        <checkstyle.version>3.1.0</checkstyle.version>
+        <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
+        <pmd.version>6.20.0</pmd.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
+
+        <jacoco.version>0.8.5</jacoco.version>
+        <owasp.dependency-check-maven.version>6.1.5</owasp.dependency-check-maven.version>
+        <spotbugs-maven-plugin.version>3.1.12</spotbugs-maven-plugin.version>
+        <spotbugs.version>3.1.12</spotbugs.version>
+        <findsecbugs-plugin.version>1.10.1</findsecbugs-plugin.version>
+        <sb-contrib.version>7.4.7</sb-contrib.version>
+
+        <failsafe.skip>false</failsafe.skip>
+        <surefire.skip>false</surefire.skip>
+        <cucumber.skip>false</cucumber.skip>
+        <dependency.skip>false</dependency.skip>
+
+
+        <sonar.jacoco.reportPaths>${project.build.directory}/jacoco.exec,${project.build.directory}/jacoco-it.exec</sonar.jacoco.reportPaths>
+        <sonar.junit.reportPaths>${project.build.directory}/surefire-reports</sonar.junit.reportPaths>
+        <sonar.java.spotbugs.reportPaths>${project.build.directory}/spotbugsXml.xml</sonar.java.spotbugs.reportPaths>
+        <sonar.java.pmd.reportPaths>${project.build.directory}/pmd.xml</sonar.java.pmd.reportPaths>
+        <sonar.java.checkstyle.reportPaths>${project.build.directory}/checkstyle-result.xml</sonar.java.checkstyle.reportPaths>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Needed for swagger-generated api client code -->
+            <dependency><groupId>io.swagger.core.v3</groupId><artifactId>swagger-annotations</artifactId><version>${swagger-annotations.version}</version></dependency>
+            <!-- HTTP client: jersey-client -->
+            <dependency><groupId>org.glassfish.jersey.core</groupId><artifactId>jersey-client</artifactId><version>${jersey.version}</version></dependency>
+            <dependency><groupId>org.glassfish.jersey.media</groupId><artifactId>jersey-media-multipart</artifactId><version>${jersey.version}</version></dependency>
+            <dependency><groupId>org.glassfish.jersey.media</groupId><artifactId>jersey-media-json-jackson</artifactId><version>${jersey.version}</version></dependency>
+            <dependency><groupId>org.glassfish.jersey.inject</groupId><artifactId>jersey-hk2</artifactId><version>2.29.1</version></dependency>
+
+            <!-- JSON processing: jackson -->
+            <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-core</artifactId><version>${jackson.version}</version></dependency>
+            <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-annotations</artifactId><version>${jackson.version}</version></dependency>
+            <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId><version>${jackson.version}</version></dependency>
+            <dependency><groupId>com.fasterxml.jackson.datatype</groupId><artifactId>jackson-datatype-jsr310</artifactId><version>${jackson.version}</version></dependency>
+
+            <!-- ########## Test dependencies ########## -->
+
+            <dependency><scope>test</scope><groupId>junit</groupId><artifactId>junit</artifactId><version>4.12</version></dependency>
+
+            <dependency><scope>test</scope><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><version>3.10.0</version></dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${owasp.dependency-check-maven.version}</version>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>${git-commit-id-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>revision</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
+                        <verbose>true</verbose>
+                        <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
+                        <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                        <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <configuration>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven-site-plugin.version}</version>
+                </plugin>
+                <plugin><groupId>com.github.spotbugs</groupId><artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs-maven-plugin.version}</version>
+                    <configuration>
+                        <excludeFilterFile>${qa.directory}/findbugs-exclude.xml</excludeFilterFile>
+                        <effort>Max</effort>
+                        <threshold>High</threshold>
+                        <includeTests>true</includeTests>
+                        <failOnError>false</failOnError>
+                        <plugins>
+                            <plugin><groupId>com.h3xstream.findsecbugs</groupId><artifactId>findsecbugs-plugin</artifactId><version>${findsecbugs-plugin.version}</version></plugin>
+                            <plugin><groupId>com.mebigfatguy.sb-contrib</groupId><artifactId>sb-contrib</artifactId><version>${sb-contrib.version}</version></plugin>
+                        </plugins>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>prepare-package</phase>
+                            <goals>
+<!--                                <goal>spotbugs</goal> &lt;!&ndash;TODO: should be check if all findbugs are passing&ndash;&gt;-->
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>6.1.5</version>
+                    <configuration>
+                        <suppressionFile>${qa.directory}/owasp-dependency-checker-suppressions.xml</suppressionFile>
+                        <failBuildOnCVSS>1</failBuildOnCVSS> <!-- should be 1-->
+                        <skip>${dependency.skip}</skip>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>prepare-package</phase>
+                            <goals><goal>check</goal></goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin><groupId>org.sonarsource.scanner.maven</groupId><artifactId>sonar-maven-plugin</artifactId><version>3.6.0.1398</version>
+                    <executions>
+                        <execution>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sonar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>io.swagger</groupId>
+                    <artifactId>swagger-codegen-maven-plugin</artifactId>
+                    <version>${swagger-codegen-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <!--maven runs top to bottom so mvn opts turns off sonar, but then no proxy turns it back on, then no url will turn it off again if not found -->
+        <profile>
+            <id>sonar-disable-mvn-ops-missing</id>
+            <activation>
+                <property><name>!env.MAVEN_OPTS</name></property>
+            </activation>
+            <properties>
+                <sonar.skip>true</sonar.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>sonar-enable-no-proxy</id>
+            <activation>
+                <property>
+                    <name>!env.http_proxy</name>
+                </property>
+            </activation>
+            <properties>
+                <sonar.skip>false</sonar.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>sonar-disable-no-url</id>
+            <activation>
+                <property><name>!sonar.host.url</name></property>
+            </activation>
+            <properties>
+                <sonar.skip>true</sonar.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>local-proxy</id>
+            <activation>
+                <property>
+                    <name>env.http_proxy</name>
+                </property>
+            </activation>
+            <properties>
+                <springBootRunArguments>-Dspring.profiles.import="PROXY"</springBootRunArguments>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <spring.profiles.import>PROXY</spring.profiles.import>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <spring.profiles.import>PROXY</spring.profiles.import>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>internalRepo</id>
+            <activation>
+                <property>
+                    <name>useInternalRepo</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>nexus</id>
+                    <name>Nexus</name>
+                    <url>https://nexus.tools.services.qld.gov.au/nexus/repository/releases</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus</id>
+                    <name>Nexus</name>
+                    <url>https://nexus.tools.services.qld.gov.au/nexus/repository/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+</project>
