@@ -20,13 +20,14 @@ jobs:
       - name: Setup Test Integration Credentials
         run: |
           echo "---" > api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
-          echo "PLS_USERNAME: ${PLSNAME}" >> api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
-          echo "PLS_PASSWORD: ${PLSPASS}" >> api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
+          echo "PLS_USERNAME: $PLSNAME" >> api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
+          echo "PLS_PASSWORD: $PLSPASS" >> api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
           echo "config setup:"
           cat api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
+          echo "config done"
         env:
-          PLSNAME: "${{ secrets.PLSPLUSQG_USERNAME }}"
-          PLSPASS: "${{ secrets.PLSPLUSQG_PASSWORD }}"
+          PLSNAME: ${{secrets.PLSPLUSQG_USERNAME}}
+          PLSPASS: ${{secrets.PLSPLUSQG_PASSWORD}}
       - name: Build with Maven
         run: cd api && mvn --batch-mode --update-snapshots verify
 
