@@ -23,7 +23,7 @@ public class PlsPlusQgService {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
         // Configure HTTP basic authorization: BasicAuth
         HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("BasicAuth");
-        if(config.getPassword() == null || config.getUsername() == null) {
+        if (config.getPassword() == null || config.getUsername() == null) {
             throw new RuntimeException("Need PlsPlus QG username and password");
         }
         basicAuth.setUsername(config.getUsername());

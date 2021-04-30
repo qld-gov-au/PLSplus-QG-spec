@@ -8,6 +8,14 @@
    ]]></notes>
         <cve>CVE-2018-1258</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: cryptacular-1.1.1.jar
+   https://github.com/spring-projects/spring-security/issues/9095 awaiting upstream changes
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.cryptacular/cryptacular@.*$</packageUrl>
+        <cve>CVE-2020-7226</cve>
+    </suppress>
 
 
 </suppressions>
