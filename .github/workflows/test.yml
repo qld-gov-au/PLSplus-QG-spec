@@ -18,10 +18,11 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build with Maven
-        run: cd api && mvn --batch-mode --update-snapshots verify -DintegrationPoints.plsplusqg.username=$env:plsplusqgUsername -DintegrationPoints.plsplusqg.password=$env:plsplusqgPassword
-        env:
-          - plsplusqgUsername: ${{ secrets.PLSPLUSQG_USERNAME }}
-          - plsplusqgPassword: ${{ secrets.PLSPLUSQG_PASSWORD }}
+#        run: cd api && mvn --batch-mode --update-snapshots verify -DintegrationPoints.plsplusqg.username=$env:plsplusqgUsername -DintegrationPoints.plsplusqg.password=$env:plsplusqgPassword
+        run: cd api && mvn --batch-mode --update-snapshots verify
+#        env:
+#          - plsplusqgUsername: ${{ secrets.PLSPLUSQG_USERNAME }}
+#          - plsplusqgPassword: ${{ secrets.PLSPLUSQG_PASSWORD }}
 #      - run: mkdir staging && cp target/*.jar staging
 #      - uses: actions/upload-artifact@v2
 #        with:
