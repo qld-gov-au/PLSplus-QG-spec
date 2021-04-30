@@ -1,0 +1,21 @@
+---
+spring:
+  config:
+    import: 'classpath:pdev.yml' #pdev.yml is gitignored as it will contain username/password we don't want in git
+
+server.port: 3000
+
+management.endpoints.enabled-by-default: true
+
+logging:
+  level:
+    root: ERROR
+    #org.springframework: DEBUG
+    org.springframework.web: WARN
+    guru.springframework.controllers: WARN
+    au.gov.qld.qss: TRACE
+
+integration-points:
+  plsplusqg:
+    username: "${PLS_USERNAME}"
+    password: "${PLS_PASSWORD}"
