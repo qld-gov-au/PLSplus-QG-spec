@@ -12,38 +12,23 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>PLSplusQG-SwagerClient</artifactId>
+    <artifactId>PLSplusQG-Jersey2Client</artifactId>
 
     <packaging>jar</packaging>
 
-    <name>Property Location Service Plus PLSplus QG Version Swagger Client</name>
+    <name>Property Location Service Plus PLSplus QG Version Jersey 2 Client</name>
 
     <properties>
-        <spring-boot.version>2.4.5</spring-boot.version>
         <config.directory>${project.basedir}/qa</config.directory>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-        <dependency><groupId>org.springframework.ws</groupId><artifactId>spring-ws-core</artifactId></dependency>
-        <dependency><groupId>org.springframework.ws</groupId><artifactId>spring-ws-support</artifactId></dependency>
-        <dependency><groupId>org.springframework.ws</groupId><artifactId>spring-ws-security</artifactId>
-            <exclusions><exclusion><groupId>org.bouncycastle</groupId><artifactId>bcprov-jdk15on</artifactId></exclusion></exclusions>
-        </dependency>
-        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-autoconfigure</artifactId></dependency>
-        <dependency><groupId>org.apache.logging.log4j</groupId><artifactId>log4j-to-slf4j</artifactId></dependency>
 
         <!-- Needed for swagger-generated models -->
         <dependency><groupId>io.swagger.core.v3</groupId><artifactId>swagger-annotations</artifactId></dependency>
@@ -60,9 +45,9 @@
         <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
         <dependency><groupId>com.fasterxml.jackson.datatype</groupId><artifactId>jackson-datatype-jsr310</artifactId></dependency>
         <!-- ########## Test dependencies ########## -->
-        <dependency><scope>test</scope><groupId>junit</groupId><artifactId>junit</artifactId></dependency>
+        <dependency><scope>test</scope><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId></dependency>
+        <dependency><scope>test</scope><groupId>org.junit.vintage</groupId><artifactId>junit-vintage-engine</artifactId></dependency>
         <dependency><scope>test</scope><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId></dependency>
-        <dependency><scope>test</scope><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId></dependency>
     </dependencies>
 
 
@@ -147,6 +132,24 @@
             </plugin>
             <plugin>
                 <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin><groupId>org.sonarsource.scanner.maven</groupId><artifactId>sonar-maven-plugin</artifactId>
                 <executions>

@@ -6420,18 +6420,20 @@ components:
     ArrayOfResult:
       title: Array Of Result
       type: object
+      description: >
+        **Note&colon; If the array holds one item, the server will remove the array wrapper.**
+
+
+        For java jackson databind ObjectMapper must have setting `DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY` set to true
+
+
+        For java mock server jackson databind ObjectMapper `SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED` must be set to true to mimic actual server spec
       properties:
         Result:
           type: array
           items:
             $ref: '#/components/schemas/Result'
           description: ''
-    ArrayOfResultSingle:
-      title: Array Of Result Single
-      type: object
-      properties:
-        Result:
-          $ref: '#/components/schemas/Result'
     ArrayOfString:
       title: Array Of String
       type: object
@@ -6568,7 +6570,7 @@ components:
       title: Validate Lot Plan Response
       type: object
       properties:
-        ValidateLotPlanResult:
+        ValidateAddressResult:
           $ref: '#/components/schemas/ValidateAddressResult'
     ValidateAddressResult:
       title: Validate Address Result
@@ -6581,9 +6583,7 @@ components:
           format: int32
           example: 1
         Results:
-          oneOf:
-            - $ref: '#/components/schemas/ArrayOfResult'
-            - $ref: '#/components/schemas/ArrayOfResultSingle'
+          $ref: '#/components/schemas/ArrayOfResult'
     ValidateLotPlan:
       title: Validate Lot Plan
       required:
@@ -6613,9 +6613,7 @@ components:
           format: int32
           example: 1
         Results:
-          oneOf:
-            - $ref: '#/components/schemas/ArrayOfResult'
-            - $ref: '#/components/schemas/ArrayOfResultSingle'
+          $ref: '#/components/schemas/ArrayOfResult'
     ParseAddress:
       title: Parse Address
       required:
@@ -6644,9 +6642,7 @@ components:
           format: int32
           example: 1
         Results:
-          oneOf:
-            - $ref: '#/components/schemas/ArrayOfResult'
-            - $ref: '#/components/schemas/ArrayOfResultSingle'
+          $ref: '#/components/schemas/ArrayOfResult'
     ValidateCoordinates:
       title: Validate Coordinates
       required:
@@ -6683,9 +6679,7 @@ components:
           format: int32
           example: 1
         Results:
-          oneOf:
-            - $ref: '#/components/schemas/ArrayOfResult'
-            - $ref: '#/components/schemas/ArrayOfResultSingle'
+          $ref: '#/components/schemas/ArrayOfResult'
     AutoCompleteAddress:
       title: Auto Complete Address
       type: object

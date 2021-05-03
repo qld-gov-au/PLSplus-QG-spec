@@ -12,7 +12,8 @@
     <name>API Interface Parent</name>
 
     <modules>
-        <module>PLSplusQG-SwaggerClient</module>
+        <module>PLSplusQG-Jersey2Client</module>
+        <module>PLSplusQG-SpringBootClient</module>
     </modules>
 
     <scm>
@@ -90,8 +91,18 @@
 
             <!-- ########## Test dependencies ########## -->
 
-            <dependency><scope>test</scope><groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version></dependency>
-
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>5.7.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>5.7.1</version>
+                <scope>test</scope>
+            </dependency>
             <dependency><scope>test</scope><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><version>3.19.0</version></dependency>
 
         </dependencies>
@@ -108,6 +119,11 @@
 
         <pluginManagement>
             <plugins>
+                <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M5</version>
+                </plugin>
                 <plugin>
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>

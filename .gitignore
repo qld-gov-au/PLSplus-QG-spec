@@ -3,4 +3,4 @@ gen
 target
 *.iml
 #block username/password file going into public github this file is dynamically built by github actions from repo secrets
-api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
+api/PLSplusQG-SpringBootClient/src/test/resources/pdev.yml
