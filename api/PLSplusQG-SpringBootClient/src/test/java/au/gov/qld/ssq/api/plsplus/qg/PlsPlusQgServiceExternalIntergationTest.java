@@ -13,12 +13,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +49,6 @@ public class PlsPlusQgServiceExternalIntergationTest {
         assertThat(output.get(10)).isEqualTo("27 PLUNKETT ST PADDINGTON QLD 4064");
         assertThat(output.get(11)).isEqualTo("27 PLUNKETT ST WOODRIDGE QLD 4114");
     }
-
 
     private OffsetDateTime getNowMinusOneSecond() {
         return OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)))
@@ -180,7 +177,6 @@ public class PlsPlusQgServiceExternalIntergationTest {
         assertThat(lastObject.getAliases()).isNull();
         assertThat(lastObject.getConfidence()).isEqualTo(98);
     }
-
 
     @Tag("ExternalIntegrationTest")
     @Test
