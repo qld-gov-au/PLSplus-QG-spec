@@ -3,7 +3,21 @@ name: Java CI
 on: [push]
 
 jobs:
+  checksecret:
+    name: check if PLSPLUSQG_USERNAME is set in github secrets
+    runs-on: ubuntu-latest
+    outputs:
+      is_MY_SECRET_set: ${{ steps.checksecret_job.outputs.is_MY_SECRET_set }}
+    steps:
+      - name: Check whether secrets are available
+        id: checksecret_job
+        env:
+          MY_SECRET: ${{ secrets.PLSPLUSQG_USERNAME }}
+        run: |
+          echo "is_MY_SECRET_set: ${{ env.MY_SECRET != '' }}"
+          echo "::set-output name=is_MY_SECRET_set::${{ env.MY_SECRET != '' }}"
   build:
+    needs: [ checksecret ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,25 +31,36 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
       - name: Setup Test Integration Credentials
         run: |
-          echo "---" > api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
-          echo "PLS_USERNAME: $PLSNAME" >> api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
-          echo "PLS_PASSWORD: $PLSPASS" >> api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
+          echo "---" >  api/PLSplusQG-SpringBootClient/src/test/resources/pdev.yml
+          echo "PLS_USERNAME: $PLSNAME" >>  api/PLSplusQG-SpringBootClient/src/test/resources/pdev.yml
+          echo "PLS_PASSWORD: $PLSPASS" >>  api/PLSplusQG-SpringBootClient/src/test/resources/pdev.yml
           echo "config setup:"
-          cat api/PLSplusQG-SwaggerClient/src/test/resources/pdev.yml
+          cat  api/PLSplusQG-SpringBootClient/src/test/resources/pdev.yml
           echo "config done"
         env:
           PLSNAME: ${{secrets.PLSPLUSQG_USERNAME}}
           PLSPASS: ${{secrets.PLSPLUSQG_PASSWORD}}
-      - name: Build with Maven
+      - name: Build with Maven Full
+        if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
         run: cd api && mvn --batch-mode --update-snapshots verify
 
-      - run: |
+      - name: Build with Maven Exclude External Integration Tests
+        if: needs.checksecret.outputs.is_MY_SECRET_set == 'false'
+        run: cd api && mvn --batch-mode --update-snapshots verify  -DexcludedGroups=ExternalIntegrationTest
+
+
+      - name: Package artifacts
+        if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
+        run: |
          mkdir staging
-         cp api/PLSplusQG-SwaggerClient/target/*.jar staging
-         cp -r api/PLSplusQG-SwaggerClient/target/generated-sources/swagger/docs staging
-      - uses: actions/upload-artifact@v2
+         cp  api/PLSplusQG-SpringBootClient/target/PLS*.jar staging
+         cp -r  api/PLSplusQG-SpringBootClient/target/generated-sources/swagger/docs staging
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
         with:
           name: Package
           path: staging
