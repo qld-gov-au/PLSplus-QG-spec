@@ -13,7 +13,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +53,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Tag("ExternalIntegrationTest")
     @Test
     public void parseAddressTestSingle() throws ApiException {
-        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)));
         ParseAddressResult result = plsPlusQgService.parseAddress("27 PLUM PDE NERANG QLD 4211", false);
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
@@ -85,7 +88,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Tag("ExternalIntegrationTest")
     @Test
     public void parseAddressTestMulti() throws ApiException {
-        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)));
         ParseAddressResult result = plsPlusQgService.parseAddress("u5/74 Wardoo St Ashmore", false);
         assertThat(result.getResultCount()).isEqualTo(17);
         Map<String, Result> sortedResults = new HashMap<>();
@@ -173,7 +176,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Tag("ExternalIntegrationTest")
     @Test
     public void shouldGetAddressFromCoodinatesPassedIn() throws ApiException {
-        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)));
         ValidateCoordinatesResult result = plsPlusQgService.validateCoordinates(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(153.33099322), false);
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
@@ -208,7 +211,6 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Tag("ExternalIntegrationTest")
     @Test()
     public void expectApiExcaptionFromValidateCoordinatesWithInvalidLongitudeCoord() throws ApiException {
-        OffsetDateTime now = OffsetDateTime.now();
         Assertions.assertThrows(ApiException.class, () -> {
             try {
                 plsPlusQgService.validateCoordinates(BigDecimal.valueOf(-128.00323935), BigDecimal.valueOf(180.33099322), false);
@@ -223,7 +225,6 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Tag("ExternalIntegrationTest")
     @Test()
     public void expectApiExcaptionFromValidateCoordinatesWithInvalidLatCoord() throws ApiException {
-        OffsetDateTime now = OffsetDateTime.now();
         Assertions.assertThrows(ApiException.class, () -> {
             try {
                 plsPlusQgService.validateCoordinates(BigDecimal.valueOf(-188.00323935), BigDecimal.valueOf(120.33099322), false);
@@ -238,7 +239,6 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Tag("ExternalIntegrationTest")
     @Test
     public void shouldHaveEmptyResultSetforGetAddressFromCoodinatesWithCoordOutsideQld() throws ApiException {
-        OffsetDateTime now = OffsetDateTime.now();
         ValidateCoordinatesResult result = plsPlusQgService.validateCoordinates(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(154), false);
         assertThat(result.getResultCount()).isEqualTo(0);
         assertThat(result.getResults()).isNull();

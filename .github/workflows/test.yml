@@ -57,7 +57,7 @@ jobs:
         run: |
          mkdir staging
          cp  api/PLSplusQG-SpringBootClient/target/PLS*.jar staging
-         cp -r  api/PLSplusQG-SpringBootClient/target/generated-sources/swagger/docs staging
+         cp -r  api/PLSplusQG-Jersey2Client/target/generated-sources/swagger/docs staging
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
