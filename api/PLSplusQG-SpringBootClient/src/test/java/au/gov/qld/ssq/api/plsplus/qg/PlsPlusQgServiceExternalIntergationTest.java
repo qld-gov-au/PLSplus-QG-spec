@@ -2,6 +2,7 @@ package au.gov.qld.ssq.api.plsplus.qg;
 
 import au.gov.qld.ssq.api.plsplus.qg.handler.ApiException;
 import au.gov.qld.ssq.api.plsplus.qg.model.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -14,7 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -86,8 +89,12 @@ public class PlsPlusQgServiceExternalIntergationTest {
         OffsetDateTime now = OffsetDateTime.now();
         ParseAddressResult result = plsPlusQgService.parseAddress("u5/74 Wardoo St Ashmore", false);
         assertThat(result.getResultCount()).isEqualTo(17);
-
-        Result firstObject = result.getResults().getResult().get(0);
+        Map<String, Result> sortedResults = new HashMap<>();
+        //Because server sorts on something that is not sitename, the list is different (after cache wears off)
+        for (Result r : result.getResults().getResult())  {
+            sortedResults.put(r.getAddress().getSiteName(), r);
+        }
+        Result firstObject = sortedResults.get("BELLBIRD GROVE");
         assertThat(firstObject.getMetaData().size()).isEqualTo(2);
         assertThat(firstObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
         assertThat(OffsetDateTime.parse(firstObject.getMetaData().get(0).getValue())).isAfterOrEqualTo(now);
@@ -133,7 +140,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
 //14 = {Result@7022} "class Result {\n physicalAddressIndicator: Y\n metaData: [class MetaData {\n name: Timestamp\n value: 2021-05-03T11:52:53.3515339+10:00\n }, class MetaData {\n name: FullAddressString\n value: UNIT 5 74 WARDOO ST, ASHMORE QLD 4214\n }]\n address: class Address {\n roadNumber: class RoadNumber {\n first: 74\n last: null\n }\n road: class Road {\n name: WARDOO\n typeCode: ST\n suffix: null\n }\n siteName: DOLPHIN SOUTH\n unit: class Unit {\n typeCode: U\n number: 5\n }\n level: null\n locality: ASHMORE\n state: QLD\n postcode: 4214\n }\n parcel: class Parcel {\n lot: 5\n plan: BUP8706\n }\n localGovernmentArea: class LocalGovernmentArea {\n code: 3430\n name: GOLD COAST CITY\n }\n geocode: [class Geocode {\n typeCode: PC\n latitude: -27.98538473\n longitude: 153.39170"
 //15 = {Result@7023} "class Result {\n physicalAddressIndicator: Y\n metaData: [class MetaData {\n name: Timestamp\n value: 2021-05-03T11:52:53.3515339+10:00\n }, class MetaData {\n name: FullAddressString\n value: UNIT 5 74 WARDOO ST, ASHMORE QLD 4214\n }]\n address: class Address {\n roadNumber: class RoadNumber {\n first: 74\n last: null\n }\n road: class Road {\n name: WARDOO\n typeCode: ST\n suffix: null\n }\n siteName: DOLPHIN NORTH\n unit: class Unit {\n typeCode: U\n number: 5\n }\n level: null\n locality: ASHMORE\n state: QLD\n postcode: 4214\n }\n parcel: class Parcel {\n lot: 5\n plan: BUP8707\n }\n localGovernmentArea: class LocalGovernmentArea {\n code: 3430\n name: GOLD COAST CITY\n }\n geocode: [class Geocode {\n typeCode: PC\n latitude: -27.98466131\n longitude: 153.39205"
 
-        Result lastObject = result.getResults().getResult().get(16);
+        Result lastObject = sortedResults.get("ACACIA CLOSE");
         assertThat(lastObject.getMetaData().size()).isEqualTo(2);
         assertThat(lastObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
         assertThat(OffsetDateTime.parse(lastObject.getMetaData().get(0).getValue())).isAfterOrEqualTo(now);
