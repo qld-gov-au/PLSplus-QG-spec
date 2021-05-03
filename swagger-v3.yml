@@ -6423,6 +6423,7 @@ components:
       description: >
         **Note&colon; If the array holds one item, the server will remove the array wrapper.**
 
+        Note 2&colon; The results list order when more than 1 result is returned is random after cache has expired.
 
         For java jackson databind ObjectMapper must have setting `DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY` set to true
 

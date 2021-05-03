@@ -2,7 +2,6 @@ package au.gov.qld.ssq.api.plsplus.qg;
 
 import au.gov.qld.ssq.api.plsplus.qg.handler.ApiException;
 import au.gov.qld.ssq.api.plsplus.qg.model.*;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -91,9 +90,10 @@ public class PlsPlusQgServiceExternalIntergationTest {
         assertThat(result.getResultCount()).isEqualTo(17);
         Map<String, Result> sortedResults = new HashMap<>();
         //Because server sorts on something that is not sitename, the list is different (after cache wears off)
-        for (Result r : result.getResults().getResult())  {
+        for (Result r : result.getResults().getResult()) {
             sortedResults.put(r.getAddress().getSiteName(), r);
         }
+
         Result firstObject = sortedResults.get("BELLBIRD GROVE");
         assertThat(firstObject.getMetaData().size()).isEqualTo(2);
         assertThat(firstObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
