@@ -17,6 +17,8 @@ import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,10 +52,16 @@ public class PlsPlusQgServiceExternalIntergationTest {
         assertThat(output.get(11)).isEqualTo("27 PLUNKETT ST WOODRIDGE QLD 4114");
     }
 
+
+    private OffsetDateTime getNowMinusOneSecond() {
+        return OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)))
+            .minus(1L, ChronoUnit.SECONDS);
+    }
+
     @Tag("ExternalIntegrationTest")
     @Test
     public void parseAddressTestSingle() throws ApiException {
-        OffsetDateTime now = OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)));
+        OffsetDateTime now = getNowMinusOneSecond();
         ParseAddressResult result = plsPlusQgService.parseAddress("27 PLUM PDE NERANG QLD 4211", false);
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
@@ -88,7 +96,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Tag("ExternalIntegrationTest")
     @Test
     public void parseAddressTestMulti() throws ApiException {
-        OffsetDateTime now = OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)));
+        OffsetDateTime now = getNowMinusOneSecond();
         ParseAddressResult result = plsPlusQgService.parseAddress("u5/74 Wardoo St Ashmore", false);
         assertThat(result.getResultCount()).isEqualTo(17);
         Map<String, Result> sortedResults = new HashMap<>();
@@ -173,10 +181,11 @@ public class PlsPlusQgServiceExternalIntergationTest {
         assertThat(lastObject.getConfidence()).isEqualTo(98);
     }
 
+
     @Tag("ExternalIntegrationTest")
     @Test
     public void shouldGetAddressFromCoodinatesPassedIn() throws ApiException {
-        OffsetDateTime now = OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)));
+        OffsetDateTime now = getNowMinusOneSecond();
         ValidateCoordinatesResult result = plsPlusQgService.validateCoordinates(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(153.33099322), false);
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
