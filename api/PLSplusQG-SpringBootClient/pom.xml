@@ -396,4 +396,30 @@
             </plugin>
         </plugins>
     </reporting>
+
+
+    <profiles>
+        <profile>
+            <id>Coveralls</id>
+            <activation>
+                <property>
+                    <name>env.COVERALLS_TOKEN</name>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>4.3.0</version>
+                        <configuration>
+                            <repoToken>${COVERALLS_TOKEN}</repoToken>
+                        </configuration>
+                    </plugin>
+                </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -16,8 +16,29 @@ jobs:
         run: |
           echo "is_MY_SECRET_set: ${{ env.MY_SECRET != '' }}"
           echo "::set-output name=is_MY_SECRET_set::${{ env.MY_SECRET != '' }}"
+
+  coveralls:
+    name: check if coveralls token is set in github secrets
+    runs-on: ubuntu-latest
+    outputs:
+      coveralls_enabled: ${{ steps.check_coveralls_secret_available.outputs.coveralls_enabled }}
+      coveralls_java_flag: ${{ steps.check_coveralls_secret_available.outputs.coveralls_java_flag }}
+    steps:
+      - name: Check whether secrets are available
+        id: check_coveralls_secret_available
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: |
+          coveralls_enabled=${{ env.COVERALLS_TOKEN != '' }}
+          echo "coveralls_enabled: ${{ coveralls_enabled }}"
+          echo "::set-output name=coveralls_enabled::${{ coveralls_enabled }}"
+          if [ $coveralls_enabled ]; then
+            echo "::set-output name=coveralls_java_flag:: -DCOVERALLS_TOKEN=${{ env.COVERALLS_TOKEN }}"
+          else
+            echo "::set-output name=coveralls_java_flag:: "
+          fi
   build:
-    needs: [ checksecret ]
+    needs: [ checksecret, coveralls ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -45,12 +66,15 @@ jobs:
           PLSPASS: ${{secrets.PLSPLUSQG_PASSWORD}}
       - name: Build with Maven Full
         if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
-        run: cd api && mvn --batch-mode --update-snapshots verify
+        run: cd api && mvn --batch-mode --update-snapshots verify ${COVERALLS_JAVA_FLAG}
+        env:
+          COVERALLS_JAVA_FLAG: ${{ needs.checksecret.outputs.coveralls_java_flag }}
 
       - name: Build with Maven Exclude External Integration Tests
         if: needs.checksecret.outputs.is_MY_SECRET_set == 'false'
-        run: cd api && mvn --batch-mode --update-snapshots verify  -DexcludedGroups=ExternalIntegrationTest
-
+        run: cd api && mvn --batch-mode --update-snapshots verify  -DexcludedGroups=ExternalIntegrationTest ${COVERALLS_JAVA_FLAG}
+        env:
+          COVERALLS_JAVA_FLAG: ${{ needs.checksecret.outputs.coveralls_java_flag }}
 
       - name: Package artifacts
         if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
