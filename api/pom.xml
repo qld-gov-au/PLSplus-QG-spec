@@ -51,7 +51,7 @@
         <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 
         <jacoco.version>0.8.7</jacoco.version>
-        <owasp.dependency-check-maven.version>6.1.6</owasp.dependency-check-maven.version>
+        <owasp.dependency-check-maven.version>6.2.0</owasp.dependency-check-maven.version>
         <spotbugs-maven-plugin.version>4.2.3</spotbugs-maven-plugin.version>
         <spotbugs.version>3.1.12</spotbugs.version>
         <findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
@@ -184,7 +184,7 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>6.1.6</version>
+                    <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>6.2.0</version>
                     <configuration>
                         <suppressionFile>${qa.directory}/owasp-dependency-checker-suppressions.xml</suppressionFile>
                         <failBuildOnCVSS>1</failBuildOnCVSS> <!-- should be 1-->
