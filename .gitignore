@@ -4,3 +4,4 @@ target
 *.iml
 #block username/password file going into public github this file is dynamically built by github actions from repo secrets
 api/PLSplusQG-SpringBootClient/src/test/resources/pdev.yml
+.DS_Store

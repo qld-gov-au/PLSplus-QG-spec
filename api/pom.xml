@@ -141,6 +141,7 @@
                         </execution>
                     </executions>
                     <configuration>
+                        <offline>true</offline>
                         <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
                         <verbose>true</verbose>
                         <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
