@@ -45,7 +45,7 @@
 
         <checkstyle.version>3.1.2</checkstyle.version>
         <maven-pmd-plugin.version>3.14.0</maven-pmd-plugin.version>
-        <pmd.version>6.36.0</pmd.version>
+        <pmd.version>6.37.0</pmd.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
