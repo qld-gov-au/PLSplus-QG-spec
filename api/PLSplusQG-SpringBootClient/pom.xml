@@ -19,7 +19,7 @@
     <name>Property Location Service Plus PLSplus QG Version Swagger Client</name>
 
     <properties>
-        <spring-boot.version>2.5.2</spring-boot.version>
+        <spring-boot.version>2.6.0</spring-boot.version>
         <config.directory>${project.basedir}/qa</config.directory>
     </properties>
 
