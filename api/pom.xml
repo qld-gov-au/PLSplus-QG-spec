@@ -45,7 +45,7 @@
 
         <checkstyle.version>3.1.2</checkstyle.version>
         <maven-pmd-plugin.version>3.14.0</maven-pmd-plugin.version>
-        <pmd.version>6.36.0</pmd.version>
+        <pmd.version>6.38.0</pmd.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
@@ -73,7 +73,7 @@
     <dependencyManagement>
         <dependencies>
 
-            <dependency><groupId>com.google.guava</groupId><artifactId>guava</artifactId><version>30.1.1-jre</version></dependency>
+            <dependency><groupId>com.google.guava</groupId><artifactId>guava</artifactId><version>31.0.1-jre</version></dependency>
 
             <!-- Needed for swagger-generated api client code -->
             <dependency><groupId>io.swagger.core.v3</groupId><artifactId>swagger-annotations</artifactId><version>${swagger-annotations.version}</version></dependency>
@@ -94,13 +94,13 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
-                <version>5.7.2</version>
+                <version>5.8.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
-                <version>5.7.2</version>
+                <version>5.8.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency><scope>test</scope><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><version>3.20.2</version></dependency>
@@ -152,7 +152,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                     <configuration>
                         <additionalparam>-Xdoclint:none</additionalparam>
                     </configuration>
@@ -198,7 +198,7 @@
                         </execution>
                     </executions>
                 </plugin>
-                <plugin><groupId>org.sonarsource.scanner.maven</groupId><artifactId>sonar-maven-plugin</artifactId><version>3.9.0.2155</version>
+                <plugin><groupId>org.sonarsource.scanner.maven</groupId><artifactId>sonar-maven-plugin</artifactId><version>3.9.1.2184</version>
                     <executions>
                         <execution>
                             <phase>verify</phase>
@@ -222,7 +222,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <configuration>
                     <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
