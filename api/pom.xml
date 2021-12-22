@@ -73,7 +73,7 @@
     <dependencyManagement>
         <dependencies>
 
-            <dependency><groupId>com.google.guava</groupId><artifactId>guava</artifactId><version>30.1.1-jre</version></dependency>
+            <dependency><groupId>com.google.guava</groupId><artifactId>guava</artifactId><version>31.0.1-jre</version></dependency>
 
             <!-- Needed for swagger-generated api client code -->
             <dependency><groupId>io.swagger.core.v3</groupId><artifactId>swagger-annotations</artifactId><version>${swagger-annotations.version}</version></dependency>
