@@ -143,3 +143,11 @@ In this release of the PLSplus-QG there is no intention to develop a charge for 
 
 Please read the swagger definition via https://editor.swagger.io/ or simliar tooling for the full documentation. 
 At this time it is named swagger-v3.yml 
+
+
+# Cloudformation template
+
+file: plsPlusApi.cfn.yml 
+
+To ensure the username/password of the api is not on the internet, this script creates wrapper that allows multiple nice api keys to pick the user auth with usage tracking and limits if enabled.
+ 
