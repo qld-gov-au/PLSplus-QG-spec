@@ -1,0 +1,1031 @@
+---
+# NOTE: To ensure a new deployment occurs ensure you alter PlsPlusApiDeployment${deployment increment}, PlsPlusApiStage
+AWSTemplateFormatVersion: '2010-09-09'
+
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${PlsPlusRestApi}.execute-api.${AWS::Region}.amazonaws.com"
+  ApiID:
+    Description: ID of API Key definition
+    Value: !Ref PlsPlusRestApi
+  Stage:
+    Description: Stage name
+    Value: !Ref PlsPlusApiStage
+
+Parameters:
+  Environment:
+    Description: Platform environment
+    Type: String
+  ApiUsagePlanKeySuffix:
+    Description: prefix for api keys to useage plan
+    Type: String
+    MinLength: 20
+    Default: '_plsPlusApiKeyBuiltJan2022'
+  KeyList:
+    Description: 'Example: create ssm key /config/Address/plsPlusKeyList with value { "apikey": {"auth": "Basic thatgoesintoauthoriariation", "apiUsageKeyPre": "apiKey"}, repeat as needed }'
+    Default: '/config/Address/plsPlusKeyList'
+    Type: 'AWS::SSM::Parameter::Value<String>'
+  ApiDebug:
+    Type: String
+    Description: 'Add request and response payloads to cloudfront logs'
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+  ApiLoggingLevel:
+    Type: String
+    Default: "ERROR"
+    Description: 'Cloudfront log level OFF, ERROR, and INFO. Choose ERROR'
+    AllowedValues:
+      - 'OFF'
+      - 'ERROR'
+      - 'INFO'
+
+Conditions:
+  # Create a condition that matches on the parameter string value being treated
+  # as true/on.
+  ApiDebugEnabled: !Equals [!Ref ApiDebug, 'true']
+
+
+Resources:
+
+  PlsPlusRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: AUTHORIZER
+  #    BinaryMediaTypes:
+  #      - String
+  #    Body: Json
+  #    BodyS3Location:
+  #      S3Location
+  #    CloneFrom: String
+      Description: 'PlsPlus QG apiWrapper'
+  #    DisableExecuteApiEndpoint: Boolean
+  #    EndpointConfiguration:
+  #      EndpointConfiguration
+  #    FailOnWarnings: Boolean
+  #    MinimumCompressionSize: Integer
+      Mode: 'merge'
+      Name: 'PlsPlus_QG_apiWrapper'
+  #    Parameters:
+  #      Key : Value
+  #    Policy: Json
+  #    Tags:
+  #      - Tag
+
+  QldOnlineApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Sub ${AWS::StackName}-qldonline-ApiKey
+      Description: CloudFormation API Key V1
+      Enabled: true
+      GenerateDistinctId: false
+      Value: !Sub 'qldonline${ApiUsagePlanKeySuffix}'
+  covid19ApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Sub ${AWS::StackName}-covid19-ApiKey
+      Description: CloudFormation API Key V1
+      Enabled: true
+      GenerateDistinctId: false
+      Value: !Sub 'covid19${ApiUsagePlanKeySuffix}'
+  forgovApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Sub ${AWS::StackName}-forgov-ApiKey
+      Description: CloudFormation API Key V1
+      Enabled: true
+      GenerateDistinctId: false
+      Value: !Sub 'forgov${ApiUsagePlanKeySuffix}'
+  healthApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Sub ${AWS::StackName}-health-ApiKey
+      Description: CloudFormation API Key V1
+      Enabled: true
+      GenerateDistinctId: false
+      Value: !Sub 'health${ApiUsagePlanKeySuffix}'
+  resourcesApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Sub ${AWS::StackName}-resource-ApiKey
+      Description: CloudFormation API Key V1
+      Enabled: true
+      GenerateDistinctId: false
+      Value: !Sub 'resource${ApiUsagePlanKeySuffix}'
+  tmrApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Sub ${AWS::StackName}-tmr-ApiKey
+      Description: CloudFormation API Key V1
+      Enabled: true
+      GenerateDistinctId: false
+      Value: !Sub 'tmr${ApiUsagePlanKeySuffix}'
+
+  DefaultApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId: !Ref PlsPlusRestApi
+          Stage: !Ref PlsPlusApiStage
+      Description: !Sub ${AWS::StackName} usage plan
+#      Quota:
+#        Limit: 2000
+#        Period: MONTH
+#      Throttle:
+#        BurstLimit: 10
+#        RateLimit: 10
+      UsagePlanName: !Sub ${AWS::StackName}-default-usage-plan
+
+  ApiUsagePlanKeyQldOnline:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref QldOnlineApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref DefaultApiUsagePlan
+  ApiUsagePlanKeyCovid19ApiKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref covid19ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref DefaultApiUsagePlan
+  ApiUsagePlanKeyForgovApiKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref forgovApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref DefaultApiUsagePlan
+  ApiUsagePlanKeyHealthApiKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref healthApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref DefaultApiUsagePlan
+  ApiUsagePlanKeytmrApiKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref tmrApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref DefaultApiUsagePlan
+  ApiUsagePlanKeyresourcesApiKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref resourcesApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref DefaultApiUsagePlan
+
+
+  PlsPlusApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref PlsPlusApiDeployment5 #update when deployment is updated
+      RestApiId: !Ref PlsPlusRestApi
+      StageName: v1
+      TracingEnabled : true
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: "*"
+          LoggingLevel: !Ref ApiLoggingLevel
+          DataTraceEnabled: !If [ApiDebugEnabled, true, false]
+          MetricsEnabled: true
+#          CacheDataEncrypted: Boolean
+#          CacheTtlInSeconds: Integer
+#          CachingEnabled: Boolean
+#          ThrottlingBurstLimit: Integer
+#          ThrottlingRateLimit: Double
+
+  PlsPlusApiDeployment5: #must increment to update stage
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: #add all methods here so it does not deploy early
+      - PlsPlusQGautocompleteAddressGetMethod
+      - PlsPlusQGautocompleteAddressPostMethod
+      - PlsPlusQGautocompleteAddressOptionsMethod
+      - PlsPlusQGMethodParseAddressGet
+      - PlsPlusQGMethodParseAddressPost
+      - PlsPlusQGautocompleteMethodParseAddressOptions
+      - PlsPlusQGMethodValidateCoordinatesGet
+      - PlsPlusQGMethodValidateCoordinatesPost
+      - PlsPlusQGautocompleteMethodValidateCoordinatesOptions
+      - PlsPlusQGMethodValidateAddressPost
+      - PlsPlusQGautocompleteMethodValidateAddressOptions
+      - PlsPlusQGMethodValidateLotPlanGet
+      - PlsPlusQGMethodValidateLotPlanPost
+      - PlsPlusQGautocompleteMethodValidateLotPlanOptions
+    Properties:
+      RestApiId: !Ref PlsPlusRestApi
+
+  LambdaAuthorizerIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub ${AWS::StackName}-logs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}-authorizer:*
+
+  PlsPlusAuthenticationAPILambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: !Sub |
+          exports.handler = async(event) => {
+              let keyList = JSON.parse(process.env.KeyList);
+              //console.log(JSON.stringify(event, null, 2))
+              let apiKey = event.queryStringParameters.apiKey;
+              if (keyList[apiKey] !== undefined) {
+                  console.log("allowed: " + apiKey)
+                  let validKey = keyList[apiKey]
+
+                  let authy = validKey.auth;
+                  if (event.headers['Authorization'] !== undefined) {
+                      authy = event.headers['Authorization']
+                  }
+
+                  let output =  {
+                      "principalId": apiKey, // The principal user identification associated with the token sent by the client.
+                      "policyDocument": {
+                          "Version": "2012-10-17",
+                          "Statement": [{
+                              "Action": "execute-api:Invoke",
+                              "Effect": "Allow",
+                              "Resource": event.methodArn
+                          }]
+                      },
+                      "context": {
+                          "Authorization": authy,
+                      },
+                      "usageIdentifierKey": validKey.apiUsageKeyPre + "${ApiUsagePlanKeySuffix}"
+                  };
+                  console.log(JSON.stringify(output, null, 2));
+                  return output;
+              }  else {
+                  console.log("denied:" + apiKey);
+                  let output = {
+                      "principalId": apiKey,
+                      "policyDocument": {
+                          "Version": "2012-10-17",
+                          "Statement": [{
+                              "Action": "execute-api:Invoke",
+                              "Effect": "Deny",
+                              "Resource": event.methodArn
+                          }]
+                      },
+                      "context": {
+                          "stringKey": "value"
+                      }
+                  };
+                  //console.log(JSON.stringify(output, null, 2));
+                  return output;
+              }
+          };
+      Description: This the PlsPlus Auth+UsagePlanKey Injector
+      FunctionName: !Sub ${AWS::StackName}-authorizer
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaAuthorizerIAMRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 5
+      Environment:
+        Variables:
+          KeyList: !Ref KeyList
+
+  PlsPlusApiGatewayInvokeAuhorizer:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt PlsPlusAuthenticationAPILambda.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlsPlusRestApi}/*/*
+
+
+  PlsPlusAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: PlsPlusAuthorizer
+      RestApiId: !Ref PlsPlusRestApi
+      AuthorizerResultTtlInSeconds: 5
+      AuthorizerUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PlsPlusAuthenticationAPILambda.Arn}/invocations'
+      Type: REQUEST
+      IdentitySource: 'method.request.querystring.apiKey'
+      #      AuthorizerCredentials: String
+      #      IdentityValidationExpression: 'method.request.parameter.apiKey'
+      #      ProviderARNs:
+      #        - String
+
+  PlsPlusRequestValidator:
+    Type: AWS::ApiGateway::RequestValidator
+    Properties:
+      Name: PlsPlusRequestValidator
+      RestApiId: !Ref PlsPlusRestApi
+      ValidateRequestBody: false
+      ValidateRequestParameters: true
+
+  PlsPlusQgBase:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt
+          - PlsPlusRestApi
+          - RootResourceId
+      PathPart: 'pls-plus-qg'
+      RestApiId: !Ref PlsPlusRestApi
+
+  PlsPlusQGautocompleteAddress:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref PlsPlusQgBase
+      PathPart: 'autocompleteaddress'
+      RestApiId: !Ref PlsPlusRestApi
+
+  PlsPlusQGautocompleteAddressGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Get autocompleteAddress'
+      ResourceId: !Ref PlsPlusQGautocompleteAddress
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'GET'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+        method.request.querystring.query: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: HTTP
+        Uri: 'https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/AutoCompleteAddress'
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+          - method.request.querystring.query
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        IntegrationHttpMethod: 'POST'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": "{\n  \"AutoCompleteAddress\": {\n    \"request\": \"\
+            $input.params().querystring.query\"\n  }\n}"
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+  PlsPlusQGautocompleteAddressPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Post autocompleteAddress'
+      ResourceId: !Ref PlsPlusQGautocompleteAddress
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'POST'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: HTTP
+        Uri: 'https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/AutoCompleteAddress'
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        IntegrationHttpMethod: 'POST'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": ''
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+
+  PlsPlusQGautocompleteAddressOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Options autocompleteAddress'
+      ResourceId: !Ref PlsPlusQGautocompleteAddress
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'OPTIONS'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: MOCK
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+  PlsPlusQGparseaddress:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref PlsPlusQgBase
+      PathPart: 'parseaddress'
+      RestApiId: !Ref PlsPlusRestApi
+
+  PlsPlusQGMethodParseAddressGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Get ParseAddress'
+      ResourceId: !Ref PlsPlusQGparseaddress
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'GET'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+        method.request.querystring.query: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: HTTP
+        Uri: 'https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/ParseAddress'
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+          - method.request.querystring.query
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        IntegrationHttpMethod: 'POST'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": "{\n  \"ParseAddress\": {\n    \"MeshblockOption\": \"\
+            Exclude\",\n    \"AddressString\": \"$input.params().querystring.query\"\
+            \n  }\n}"
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+  PlsPlusQGMethodParseAddressPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Post ParseAddress'
+      ResourceId: !Ref PlsPlusQGparseaddress
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'POST'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: HTTP
+        Uri: 'https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/ParseAddress'
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        IntegrationHttpMethod: 'POST'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": ''
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+  PlsPlusQGautocompleteMethodParseAddressOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Options ParseAddress'
+      ResourceId: !Ref PlsPlusQGparseaddress
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'OPTIONS'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: MOCK
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+  PlsPlusQGvalidatecoordinates:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref PlsPlusQgBase
+      PathPart: 'validatecoordinates'
+      RestApiId: !Ref PlsPlusRestApi
+
+
+  PlsPlusQGMethodValidateCoordinatesGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Get ValidateCoordinates'
+      ResourceId: !Ref PlsPlusQGvalidatecoordinates
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'GET'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+        method.request.querystring.longitude: true
+        method.request.querystring.latitude: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: HTTP
+        Uri: 'https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/ValidateCoordinates'
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+          - method.request.querystring.longitude
+          - method.request.querystring.latitude
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        IntegrationHttpMethod: 'POST'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": "{\n  \"ValidateCoordinates\": {\n    \"MeshblockOption\"\
+            : \"Exclude\",\n    \"Latitude\": \"$input.params().querystring.latitude\"\
+            ,\n    \"Longitude\": \"$input.params().querystring.longitude\"\n  }\n\
+            }"
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+  PlsPlusQGMethodValidateCoordinatesPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Post ValidateCoordinates'
+      ResourceId: !Ref PlsPlusQGvalidatecoordinates
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'POST'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: HTTP
+        Uri: 'https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/ValidateCoordinates'
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        IntegrationHttpMethod: 'POST'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": ''
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+
+  PlsPlusQGautocompleteMethodValidateCoordinatesOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Options ValidateCoordinates'
+      ResourceId: !Ref PlsPlusQGvalidatecoordinates
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'OPTIONS'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: MOCK
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+
+  PlsPlusQGvalidateaddress:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref PlsPlusQgBase
+      PathPart: 'validateaddress'
+      RestApiId: !Ref PlsPlusRestApi
+
+
+  PlsPlusQGMethodValidateAddressPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Post ValidateAddress'
+      ResourceId: !Ref PlsPlusQGvalidateaddress
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'POST'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: HTTP
+        Uri: 'https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/ValidateAddress'
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        IntegrationHttpMethod: 'POST'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": ''
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+
+  PlsPlusQGautocompleteMethodValidateAddressOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Options ValidateAddress'
+      ResourceId: !Ref PlsPlusQGvalidateaddress
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'OPTIONS'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: MOCK
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+
+  PlsPlusQGvalidatelotplan:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref PlsPlusQgBase
+      PathPart: 'validatelotplan'
+      RestApiId: !Ref PlsPlusRestApi
+
+
+  PlsPlusQGMethodValidateLotPlanGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Get ValidateLotPlan'
+      ResourceId: !Ref PlsPlusQGvalidatelotplan
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'GET'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+        method.request.querystring.lotNumber: true
+        method.request.querystring.planNumber: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: HTTP
+        Uri: 'https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/ValidateLotPlan'
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+          - method.request.querystring.lotNumber
+          - method.request.querystring.planNumber
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        IntegrationHttpMethod: 'POST'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": "{\n  \"ValidateLotPlan\": {\n    \"MeshblockOption\"\
+            : \"Exclude\",\n    \"LotNumber\": \"$input.params().querystring.lotNumber\"\
+            ,\n    \"PlanNumber\": \"$input.params().querystring.planNumber\"\n  }\n\
+            }"
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+  PlsPlusQGMethodValidateLotPlanPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Post ValidateLotPlan'
+      ResourceId: !Ref PlsPlusQGvalidatelotplan
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'POST'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: HTTP
+        Uri: 'https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/ValidateLotPlan'
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        IntegrationHttpMethod: 'POST'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": ''
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
+  PlsPlusQGautocompleteMethodValidateLotPlanOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      OperationName: 'Options ValidateLotPlan'
+      ResourceId: !Ref PlsPlusQGvalidatelotplan
+      RestApiId: !Ref PlsPlusRestApi
+      ApiKeyRequired: true
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref PlsPlusAuthorizer
+      HttpMethod: 'OPTIONS'
+      RequestParameters:
+        method.request.header.Authorization: false
+        method.request.querystring.apiKey: true
+      RequestValidatorId: !Ref PlsPlusRequestValidator
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+      Integration:
+        Type: MOCK
+        CacheKeyParameters:
+          - method.request.header.Authorization
+          - method.request.querystring.apiKey
+        ConnectionType: INTERNET
+        ContentHandling: 'CONVERT_TO_TEXT'
+        RequestParameters:
+          integration.request.header.Authorization : 'context.authorizer.Authorization'
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ''
+
