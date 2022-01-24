@@ -19,7 +19,7 @@
     <name>Property Location Service Plus PLSplus QG Version Swagger Client</name>
 
     <properties>
-        <spring-boot.version>2.5.2</spring-boot.version>
+        <spring-boot.version>2.5.9</spring-boot.version>
         <config.directory>${project.basedir}/qa</config.directory>
     </properties>
 
@@ -83,7 +83,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
             </plugin>
 
             <plugin>
