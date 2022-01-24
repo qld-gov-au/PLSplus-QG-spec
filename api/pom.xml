@@ -7,7 +7,7 @@
     <groupId>au.gov.qld.ssq.api</groupId>
     <artifactId>swagger_parent</artifactId>
     <packaging>pom</packaging>
-    <version>2021.04.0.0</version>
+    <version>2022.01.24.16</version>
 
     <name>API Interface Parent</name>
 

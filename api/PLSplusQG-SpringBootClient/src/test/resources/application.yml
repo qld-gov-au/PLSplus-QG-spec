@@ -10,12 +10,21 @@ management.endpoints.enabled-by-default: true
 logging:
   level:
     root: ERROR
-    #org.springframework: DEBUG
+#    org.springframework: DEBUG
     org.springframework.web: WARN
     guru.springframework.controllers: WARN
-    au.gov.qld.qss: TRACE
+    au:
+      gov:
+        qld:
+          ssq:
+            api:
+              plsplus:
+                qg: TRACE
 
 integration-points:
   plsplusqg:
-    username: "${PLS_USERNAME}"
-    password: "${PLS_PASSWORD}"
+    url: "https://www.address.test-services.qld.gov.au/pls-plus-qg" #usage limited key for cicd testing, don't use anywhere else as it limit is very very low
+    apiKey: "testcicd2022" #usage limited key for cicd testing, don't use anywhere else as it limit is very very low
+    origin: "https://github.com/"
+#    username: "${PLS_USERNAME}"
+#    password: "${PLS_PASSWORD}"

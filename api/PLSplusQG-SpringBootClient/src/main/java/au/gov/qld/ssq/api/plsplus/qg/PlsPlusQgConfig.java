@@ -12,6 +12,11 @@ public class PlsPlusQgConfig {
     private String username;
     @Value(value = "${integration-points.plsplusqg.password:#{null}}")
     private String password;
+    @Value(value = "${integration-points.plsplusqg.apiKey:#{null}}")
+    private String apiKey;
+    @Value(value = "${integration-points.plsplusqg.origin:#{null}}")
+    private String origin;
+
 
     public String getUrl() {
         return url;
@@ -35,5 +40,21 @@ public class PlsPlusQgConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
     }
 }

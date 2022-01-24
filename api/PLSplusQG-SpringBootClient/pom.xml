@@ -7,7 +7,7 @@
 
     <parent>
         <groupId>au.gov.qld.ssq.api</groupId>
-        <version>2021.04.0.0</version>
+        <version>2022.01.24.16</version>
         <artifactId>swagger_parent</artifactId>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -38,14 +38,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-migrationsupport</artifactId>
-            <version>5.8.2</version>
-        </dependency>
-        <dependency>
             <groupId>au.gov.qld.ssq.api</groupId>
             <artifactId>PLSplusQG-Jersey2Client</artifactId>
-            <version>2021.04.0.0</version>
+            <version>2022.01.24.16</version>
         </dependency>
         <dependency><groupId>org.springframework.ws</groupId><artifactId>spring-ws-core</artifactId></dependency>
         <dependency><groupId>org.springframework.ws</groupId><artifactId>spring-ws-support</artifactId></dependency>
@@ -71,7 +66,6 @@
         <dependency><groupId>com.fasterxml.jackson.datatype</groupId><artifactId>jackson-datatype-jsr310</artifactId></dependency>
         <!-- ########## Test dependencies ########## -->
         <dependency><scope>test</scope><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId></dependency>
-        <dependency><scope>test</scope><groupId>org.junit.vintage</groupId><artifactId>junit-vintage-engine</artifactId></dependency>
         <dependency><scope>test</scope><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId></dependency>
         <dependency><scope>test</scope><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId></dependency>
     </dependencies>

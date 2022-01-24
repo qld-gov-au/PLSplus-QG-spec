@@ -2,9 +2,9 @@ package au.gov.qld.ssq.api.plsplus.qg;
 
 import au.gov.qld.ssq.api.plsplus.qg.handler.ApiException;
 import au.gov.qld.ssq.api.plsplus.qg.model.*;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -31,8 +32,26 @@ public class PlsPlusQgServiceExternalIntergationTest {
 
     @Tag("ExternalIntegrationTest")
     @Test
-    public void autoCompleteAddressTest() throws ApiException {
-        List<String> output = plsPlusQgService.autoCompleteAddress("27 plu");
+    public void autoCompleteAddressViaGetTest() throws ApiException {
+        List<String> output = plsPlusQgService.autoCompleteAddressGet("27 plu");
+        assertThat(output.get(0)).isEqualTo("27 PLUCKS RD ARANA HILLS QLD 4054");
+        assertThat(output.get(1)).isEqualTo("27 PLUM PDE NERANG QLD 4211");
+        assertThat(output.get(2)).isEqualTo("27 PLUM ST RUNCORN QLD 4113");
+        assertThat(output.get(3)).isEqualTo("27 PLUM PINE ST MAUDSLAND QLD 4210");
+        assertThat(output.get(4)).isEqualTo("27 PLUM TREE CR MOORE PARK BEACH QLD 4670");
+        assertThat(output.get(5)).isEqualTo("27 PLUMBS RD TANAH MERAH QLD 4128");
+        assertThat(output.get(6)).isEqualTo("27 PLUMER ST SHERWOOD QLD 4075");
+        assertThat(output.get(7)).isEqualTo("27 PLUMERIA PL DREWVALE QLD 4116");
+        assertThat(output.get(8)).isEqualTo("27 PLUMMER CR MANGO HILL QLD 4509");
+        assertThat(output.get(9)).isEqualTo("27 PLUMRIDGE ST CHELMER QLD 4068");
+        assertThat(output.get(10)).isEqualTo("27 PLUNKETT ST PADDINGTON QLD 4064");
+        assertThat(output.get(11)).isEqualTo("27 PLUNKETT ST WOODRIDGE QLD 4114");
+    }
+
+    @Tag("ExternalIntegrationTest")
+    @Test
+    public void autoCompleteAddressViaPostTest() throws ApiException {
+        List<String> output = plsPlusQgService.autoCompleteAddressPost("27 plu");
         assertThat(output.get(0)).isEqualTo("27 PLUCKS RD ARANA HILLS QLD 4054");
         assertThat(output.get(1)).isEqualTo("27 PLUM PDE NERANG QLD 4211");
         assertThat(output.get(2)).isEqualTo("27 PLUM ST RUNCORN QLD 4113");
@@ -54,9 +73,44 @@ public class PlsPlusQgServiceExternalIntergationTest {
 
     @Tag("ExternalIntegrationTest")
     @Test
-    public void parseAddressTestSingle() throws ApiException {
+    public void parseAddressTestSingleViaGet() throws ApiException {
         OffsetDateTime now = getNowMinusOneSecond();
-        ParseAddressResult result = plsPlusQgService.parseAddress("27 PLUM PDE NERANG QLD 4211", false);
+        ParseAddressResult result = plsPlusQgService.parseAddressViaGet("27 PLUM PDE NERANG QLD 4211");
+        assertThat(result.getResultCount()).isEqualTo(1);
+        Result firstObject = result.getResults().getResult().get(0);
+        assertThat(firstObject.getMetaData().size()).isEqualTo(2);
+        assertThat(firstObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
+        assertThat(OffsetDateTime.parse(firstObject.getMetaData().get(0).getValue())).isAfterOrEqualTo(now);
+        assertThat(firstObject.getMetaData().get(1).getName()).isEqualTo("FullAddressString");
+        assertThat(firstObject.getMetaData().get(1).getValue()).isEqualTo("27 PLUM PDE, NERANG QLD 4211");
+        assertThat(firstObject.getAddress().getRoadNumber().getFirst()).isEqualTo("27");
+        assertThat(firstObject.getAddress().getRoadNumber().getLast()).isNull();
+        assertThat(firstObject.getAddress().getRoad().getName()).isEqualTo("PLUM");
+        assertThat(firstObject.getAddress().getRoad().getTypeCode()).isEqualTo(Road.TypeCodeEnum.PDE);
+        assertThat(firstObject.getAddress().getRoad().getSuffix()).isNull();
+        assertThat(firstObject.getAddress().getSiteName()).isNull();
+        assertThat(firstObject.getAddress().getUnit()).isNull();
+        assertThat(firstObject.getAddress().getLevel()).isNull();
+        assertThat(firstObject.getAddress().getLocality()).isEqualTo("NERANG");
+        assertThat(firstObject.getAddress().getState()).isEqualTo("QLD");
+        assertThat(firstObject.getAddress().getPostcode()).isEqualTo("4211");
+        assertThat(firstObject.getParcel().getLot()).isEqualTo("123");
+        assertThat(firstObject.getParcel().getPlan()).isEqualTo("RP182442");
+        assertThat(firstObject.getLocalGovernmentArea().getCode()).isEqualTo("3430");
+        assertThat(firstObject.getLocalGovernmentArea().getName()).isEqualTo("GOLD COAST CITY");
+        assertThat(firstObject.getGeocode().size()).isEqualTo(1);
+        assertThat(firstObject.getGeocode().get(0).getTypeCode()).isEqualTo(Geocode.TypeCodeEnum.PC);
+        assertThat(firstObject.getGeocode().get(0).getLatitude()).isEqualTo(BigDecimal.valueOf(-28.00323935));
+        assertThat(firstObject.getGeocode().get(0).getLongitude()).isEqualTo(BigDecimal.valueOf(153.33099322));
+        assertThat(firstObject.getAliases()).isNull();
+        assertThat(firstObject.getConfidence()).isEqualTo(100);
+    }
+
+    @Tag("ExternalIntegrationTest")
+    @Test
+    public void parseAddressTestSingleViaPost() throws ApiException {
+        OffsetDateTime now = getNowMinusOneSecond();
+        ParseAddressResult result = plsPlusQgService.parseAddressViaPost("27 PLUM PDE NERANG QLD 4211", false);
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
         assertThat(firstObject.getMetaData().size()).isEqualTo(2);
@@ -91,7 +145,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Test
     public void parseAddressTestMulti() throws ApiException {
         OffsetDateTime now = getNowMinusOneSecond();
-        ParseAddressResult result = plsPlusQgService.parseAddress("u5/74 Wardoo St Ashmore", false);
+        ParseAddressResult result = plsPlusQgService.parseAddressViaPost("u5/74 Wardoo St Ashmore", false);
         assertThat(result.getResultCount()).isEqualTo(17);
         Map<String, Result> sortedResults = new HashMap<>();
         //Because server sorts on something that is not sitename, the list is different (after cache wears off)
@@ -173,76 +227,5 @@ public class PlsPlusQgServiceExternalIntergationTest {
         assertThat(lastObject.getGeocode().get(0).getLongitude()).isEqualTo(BigDecimal.valueOf(153.39179986));
         assertThat(lastObject.getAliases()).isNull();
         assertThat(lastObject.getConfidence()).isEqualTo(98);
-    }
-
-    @Tag("ExternalIntegrationTest")
-    @Test
-    public void shouldGetAddressFromCoodinatesPassedIn() throws ApiException {
-        OffsetDateTime now = getNowMinusOneSecond();
-        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinates(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(153.33099322), false);
-        assertThat(result.getResultCount()).isEqualTo(1);
-        Result firstObject = result.getResults().getResult().get(0);
-        assertThat(firstObject.getMetaData().size()).isEqualTo(2);
-        assertThat(firstObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
-        assertThat(OffsetDateTime.parse(firstObject.getMetaData().get(0).getValue())).isAfterOrEqualTo(now);
-        assertThat(firstObject.getMetaData().get(1).getName()).isEqualTo("FullAddressString");
-        assertThat(firstObject.getMetaData().get(1).getValue()).isEqualTo("27 PLUM PDE, NERANG QLD 4211");
-        assertThat(firstObject.getAddress().getRoadNumber().getFirst()).isEqualTo("27");
-        assertThat(firstObject.getAddress().getRoadNumber().getLast()).isNull();
-        assertThat(firstObject.getAddress().getRoad().getName()).isEqualTo("PLUM");
-        assertThat(firstObject.getAddress().getRoad().getTypeCode()).isEqualTo(Road.TypeCodeEnum.PDE);
-        assertThat(firstObject.getAddress().getRoad().getSuffix()).isNull();
-        assertThat(firstObject.getAddress().getSiteName()).isNull();
-        assertThat(firstObject.getAddress().getUnit()).isNull();
-        assertThat(firstObject.getAddress().getLevel()).isNull();
-        assertThat(firstObject.getAddress().getLocality()).isEqualTo("NERANG");
-        assertThat(firstObject.getAddress().getState()).isEqualTo("QLD");
-        assertThat(firstObject.getAddress().getPostcode()).isEqualTo("4211");
-        assertThat(firstObject.getParcel().getLot()).isEqualTo("123");
-        assertThat(firstObject.getParcel().getPlan()).isEqualTo("RP182442");
-        assertThat(firstObject.getLocalGovernmentArea().getCode()).isEqualTo("3430");
-        assertThat(firstObject.getLocalGovernmentArea().getName()).isEqualTo("GOLD COAST CITY");
-        assertThat(firstObject.getGeocode().size()).isEqualTo(1);
-        assertThat(firstObject.getGeocode().get(0).getTypeCode()).isEqualTo(Geocode.TypeCodeEnum.PC);
-        assertThat(firstObject.getGeocode().get(0).getLatitude()).isEqualTo(BigDecimal.valueOf(-28.00323935));
-        assertThat(firstObject.getGeocode().get(0).getLongitude()).isEqualTo(BigDecimal.valueOf(153.33099322));
-        assertThat(firstObject.getAliases()).isNull();
-        assertThat(firstObject.getConfidence()).isEqualTo(100);
-    }
-
-    @Tag("ExternalIntegrationTest")
-    @Test()
-    public void expectApiExcaptionFromValidateCoordinatesWithInvalidLongitudeCoord() throws ApiException {
-        Assertions.assertThrows(ApiException.class, () -> {
-            try {
-                plsPlusQgService.validateCoordinates(BigDecimal.valueOf(-128.00323935), BigDecimal.valueOf(180.33099322), false);
-            } catch (ApiException e) {
-                assertThat(e.getResponseBody()).contains("s:InvalidRequest");
-                assertThat(e.getResponseBody()).contains("Invalid Longitude");
-                throw e;
-            }
-        });
-    }
-
-    @Tag("ExternalIntegrationTest")
-    @Test()
-    public void expectApiExcaptionFromValidateCoordinatesWithInvalidLatCoord() throws ApiException {
-        Assertions.assertThrows(ApiException.class, () -> {
-            try {
-                plsPlusQgService.validateCoordinates(BigDecimal.valueOf(-188.00323935), BigDecimal.valueOf(120.33099322), false);
-            } catch (ApiException e) {
-                assertThat(e.getResponseBody()).contains("s:InvalidRequest");
-                assertThat(e.getResponseBody()).contains("Invalid Latitude");
-                throw e;
-            }
-        });
-    }
-
-    @Tag("ExternalIntegrationTest")
-    @Test
-    public void shouldHaveEmptyResultSetforGetAddressFromCoodinatesWithCoordOutsideQld() throws ApiException {
-        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinates(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(154), false);
-        assertThat(result.getResultCount()).isEqualTo(0);
-        assertThat(result.getResults()).isNull();
     }
 }

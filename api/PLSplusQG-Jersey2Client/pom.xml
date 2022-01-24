@@ -7,7 +7,7 @@
 
     <parent>
         <groupId>au.gov.qld.ssq.api</groupId>
-        <version>2021.04.0.0</version>
+        <version>2022.01.24.16</version>
         <artifactId>swagger_parent</artifactId>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -93,7 +93,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/../../swagger-v3.yml</inputSpec>
+                            <inputSpec>${project.basedir}/../../swagger-withGetExtension-v3.yml</inputSpec>
                             <language>java</language>
                             <library>jersey2</library>
                             <apiPackage>au.gov.qld.ssq.api.plsplus.qg</apiPackage>
