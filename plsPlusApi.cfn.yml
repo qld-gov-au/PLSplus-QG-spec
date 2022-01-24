@@ -1,10 +1,11 @@
 ---
 # NOTE: To ensure a new deployment occurs ensure you alter PlsPlusApiDeployment${deployment increment}, PlsPlusApiStage
+# This also includes any Authorizer that is included in a stage
 AWSTemplateFormatVersion: '2010-09-09'
 
 Outputs:
   ApiUrl:
-    Value: !Sub "https://${PlsPlusRestApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Value: !Sub "${PlsPlusRestApi}.execute-api.${AWS::Region}.amazonaws.com"
   ApiID:
     Description: ID of API Key definition
     Value: !Ref PlsPlusRestApi
@@ -22,9 +23,11 @@ Parameters:
     MinLength: 20
     Default: '_plsPlusApiKeyBuiltJan2022'
   KeyList:
-    Description: 'Example: create ssm key /config/Address/plsPlusKeyList with value { "apikey": {"auth": "Basic thatgoesintoauthoriariation", "apiUsageKeyPre": "apiKey"}, repeat as needed }'
+    Description: 'Example: create ssm key /config/Address/plsPlusKeyList with value { "apikey": {"auth": "Basic thatgoesintoauthoriariation", "apiUsageKeyPre": "apiKey"}, repeat as needed }, note: apiKeys need to match keys below'
     Default: '/config/Address/plsPlusKeyList'
     Type: 'AWS::SSM::Parameter::Value<String>'
+    #defaultAuth: echo -n username:password | base64
+    # { "qld": { "auth": "Basic $defaultAuth", "apiUsageKeyPre": "qldonline" }, "qh": { "auth": "Basic $defaultAuth", "apiUsageKeyPre": "health" }, "r": { "auth": "Basic $defaultAuth", "apiUsageKeyPre": "resources" }, "c19": { "auth": "Basic $defaultAuth", "apiUsageKeyPre": "covid19" }, "transport": { "auth": "Basic $defaultAuth", "apiUsageKeyPre": "tmr" }, "fg": { "auth": "Basic $defaultAuth", "apiUsageKeyPre": "forgov" } }'
   ApiDebug:
     Type: String
     Description: 'Add request and response payloads to cloudfront logs'
@@ -40,12 +43,22 @@ Parameters:
       - 'OFF'
       - 'ERROR'
       - 'INFO'
-
+  AuthorizerCache:
+    Type: String
+    Description: 'Enables Cache for production with Origin request header included, or disabled without Origin header required'
+    Default: 'enabled_with_origin_header_mandatory'
+    AllowedValues:
+      - 'disabled_with_origin_header_not_required'
+      - 'enabled_with_origin_header_mandatory'
+  AuthorizerCacheTTL:
+    Type: Number
+    Description: 'Authorizer Cache TTL when cache enabled'
+    Default: '300'
 Conditions:
   # Create a condition that matches on the parameter string value being treated
   # as true/on.
   ApiDebugEnabled: !Equals [!Ref ApiDebug, 'true']
-
+  AuthorizerCacheEnabled: !Equals [!Ref AuthorizerCache, 'enabled_with_origin_header_mandatory']
 
 Resources:
 
@@ -53,18 +66,18 @@ Resources:
     Type: AWS::ApiGateway::RestApi
     Properties:
       ApiKeySourceType: AUTHORIZER
-  #    BinaryMediaTypes:
-  #      - String
-  #    Body: Json
-  #    BodyS3Location:
-  #      S3Location
-  #    CloneFrom: String
+      #    BinaryMediaTypes:
+      #      - String
+      #    Body: Json
+      #    BodyS3Location:
+      #      S3Location
+      #    CloneFrom: String
       Description: 'PlsPlus QG apiWrapper'
-  #    DisableExecuteApiEndpoint: Boolean
-  #    EndpointConfiguration:
-  #      EndpointConfiguration
-  #    FailOnWarnings: Boolean
-  #    MinimumCompressionSize: Integer
+      #    DisableExecuteApiEndpoint: Boolean
+      #    EndpointConfiguration:
+      #      EndpointConfiguration
+      #    FailOnWarnings: Boolean
+      #    MinimumCompressionSize: Integer
       Mode: 'merge'
       Name: 'PlsPlus_QG_apiWrapper'
   #    Parameters:
@@ -72,6 +85,41 @@ Resources:
   #    Policy: Json
   #    Tags:
   #      - Tag
+
+  TestApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Sub ${AWS::StackName}-TestLimited-ApiKey
+      Description: CloudFormation API Key V1
+      Enabled: true
+      GenerateDistinctId: false
+      Value: !Sub 'test_limited${ApiUsagePlanKeySuffix}'
+
+  LimitedTestApiUsagePlan:
+    DependsOn:
+      - PlsPlusApiStage
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId: !Ref PlsPlusRestApi
+          Stage: !Ref PlsPlusApiStage
+      Description: !Sub ${AWS::StackName} usage plan
+      Quota:
+        Limit: 2000
+        Period: DAY
+      Throttle:
+        BurstLimit: 100
+        RateLimit: 10
+      UsagePlanName: !Sub ${AWS::StackName}-default-usage-plan
+  ApiUsagePlanKeyTestApiKey:
+    DependsOn:
+      - LimitedTestApiUsagePlan
+      - TestApiKey
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref TestApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref LimitedTestApiUsagePlan
 
   QldOnlineApiKey:
     Type: AWS::ApiGateway::ApiKey
@@ -123,18 +171,20 @@ Resources:
       Value: !Sub 'tmr${ApiUsagePlanKeySuffix}'
 
   DefaultApiUsagePlan:
+    DependsOn:
+      - PlsPlusApiStage
     Type: AWS::ApiGateway::UsagePlan
     Properties:
       ApiStages:
         - ApiId: !Ref PlsPlusRestApi
           Stage: !Ref PlsPlusApiStage
       Description: !Sub ${AWS::StackName} usage plan
-#      Quota:
-#        Limit: 2000
-#        Period: MONTH
-#      Throttle:
-#        BurstLimit: 10
-#        RateLimit: 10
+      #      Quota:
+      #        Limit: 2000
+      #        Period: MONTH
+      #      Throttle:
+      #        BurstLimit: 10
+      #        RateLimit: 10
       UsagePlanName: !Sub ${AWS::StackName}-default-usage-plan
 
   ApiUsagePlanKeyQldOnline:
@@ -176,9 +226,11 @@ Resources:
 
 
   PlsPlusApiStage:
+    DependsOn:
+      - PlsPlusRestApi
     Type: AWS::ApiGateway::Stage
     Properties:
-      DeploymentId: !Ref PlsPlusApiDeployment5 #update when deployment is updated
+      DeploymentId: !Ref PlsPlusApiDeployment8 #update when deployment is updated
       RestApiId: !Ref PlsPlusRestApi
       StageName: v1
       TracingEnabled : true
@@ -188,13 +240,13 @@ Resources:
           LoggingLevel: !Ref ApiLoggingLevel
           DataTraceEnabled: !If [ApiDebugEnabled, true, false]
           MetricsEnabled: true
-#          CacheDataEncrypted: Boolean
-#          CacheTtlInSeconds: Integer
-#          CachingEnabled: Boolean
-#          ThrottlingBurstLimit: Integer
-#          ThrottlingRateLimit: Double
+  #          CacheDataEncrypted: Boolean
+  #          CacheTtlInSeconds: Integer
+  #          CachingEnabled: Boolean
+  #          ThrottlingBurstLimit: Integer
+  #          ThrottlingRateLimit: Double
 
-  PlsPlusApiDeployment5: #must increment to update stage
+  PlsPlusApiDeployment8: #must increment to update stage for anything (including authorizor)
     Type: AWS::ApiGateway::Deployment
     DependsOn: #add all methods here so it does not deploy early
       - PlsPlusQGautocompleteAddressGetMethod
@@ -248,6 +300,11 @@ Resources:
               let keyList = JSON.parse(process.env.KeyList);
               //console.log(JSON.stringify(event, null, 2))
               let apiKey = event.queryStringParameters.apiKey;
+              let origin = '*';
+              if (event.headers.origin !== undefined) {
+                  origin = event.headers.origin
+              }
+
               if (keyList[apiKey] !== undefined) {
                   console.log("allowed: " + apiKey)
                   let validKey = keyList[apiKey]
@@ -269,6 +326,7 @@ Resources:
                       },
                       "context": {
                           "Authorization": authy,
+                          "origin": origin,
                       },
                       "usageIdentifierKey": validKey.apiUsageKeyPre + "${ApiUsagePlanKeySuffix}"
                   };
@@ -287,13 +345,14 @@ Resources:
                           }]
                       },
                       "context": {
-                          "stringKey": "value"
+                          "origin": origin
                       }
                   };
                   //console.log(JSON.stringify(output, null, 2));
                   return output;
               }
           };
+
       Description: This the PlsPlus Auth+UsagePlanKey Injector
       FunctionName: !Sub ${AWS::StackName}-authorizer
       Handler: index.handler
@@ -319,10 +378,20 @@ Resources:
     Properties:
       Name: PlsPlusAuthorizer
       RestApiId: !Ref PlsPlusRestApi
-      AuthorizerResultTtlInSeconds: 5
+      AuthorizerResultTtlInSeconds:
+        Fn::If:
+          - AuthorizerCacheEnabled
+          - !Ref AuthorizerCacheTTL
+          - 0
       AuthorizerUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PlsPlusAuthenticationAPILambda.Arn}/invocations'
       Type: REQUEST
-      IdentitySource: 'method.request.querystring.apiKey'
+      #IdentitySource is used as cache key, since lambda is return full arn, ensure path and method are used as cache keys
+      #arn:arn:aws:execute-api:{regionId}:{accountId}:{apiId}/{stage}/{httpVerb}/[{resource}/[{child-resources}]]
+      IdentitySource:
+        Fn::If:
+          - AuthorizerCacheEnabled #If enabled, we need to ensure header.origin is included so we don't stuff up CORS.
+          - 'method.request.querystring.apiKey,method.request.header.origin,context.httpMethod,context.path'
+          - 'method.request.querystring.apiKey'
       #      AuthorizerCredentials: String
       #      IdentityValidationExpression: 'method.request.parameter.apiKey'
       #      ProviderARNs:
@@ -340,8 +409,8 @@ Resources:
     Type: AWS::ApiGateway::Resource
     Properties:
       ParentId: !GetAtt
-          - PlsPlusRestApi
-          - RootResourceId
+        - PlsPlusRestApi
+        - RootResourceId
       PathPart: 'pls-plus-qg'
       RestApiId: !Ref PlsPlusRestApi
 
@@ -349,7 +418,7 @@ Resources:
     Type: AWS::ApiGateway::Resource
     Properties:
       ParentId: !Ref PlsPlusQgBase
-      PathPart: 'autocompleteaddress'
+      PathPart: 'AutoCompleteAddress'
       RestApiId: !Ref PlsPlusRestApi
 
   PlsPlusQGautocompleteAddressGetMethod:
@@ -396,7 +465,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
               method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -440,8 +509,8 @@ Resources:
           - StatusCode: '200'
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -485,7 +554,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
               method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -493,7 +562,7 @@ Resources:
     Type: AWS::ApiGateway::Resource
     Properties:
       ParentId: !Ref PlsPlusQgBase
-      PathPart: 'parseaddress'
+      PathPart: 'ParseAddress'
       RestApiId: !Ref PlsPlusRestApi
 
   PlsPlusQGMethodParseAddressGet:
@@ -541,7 +610,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
               method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -585,8 +654,8 @@ Resources:
           - StatusCode: '200'
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -629,7 +698,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
               method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -637,7 +706,7 @@ Resources:
     Type: AWS::ApiGateway::Resource
     Properties:
       ParentId: !Ref PlsPlusQgBase
-      PathPart: 'validatecoordinates'
+      PathPart: 'ValidateCoordinates'
       RestApiId: !Ref PlsPlusRestApi
 
 
@@ -689,7 +758,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
               method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -733,8 +802,8 @@ Resources:
           - StatusCode: '200'
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -778,7 +847,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
               method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -787,7 +856,7 @@ Resources:
     Type: AWS::ApiGateway::Resource
     Properties:
       ParentId: !Ref PlsPlusQgBase
-      PathPart: 'validateaddress'
+      PathPart: 'ValidateAddress'
       RestApiId: !Ref PlsPlusRestApi
 
 
@@ -831,8 +900,8 @@ Resources:
           - StatusCode: '200'
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -876,7 +945,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
               method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -885,7 +954,7 @@ Resources:
     Type: AWS::ApiGateway::Resource
     Properties:
       ParentId: !Ref PlsPlusQgBase
-      PathPart: 'validatelotplan'
+      PathPart: 'ValidateLotPlan'
       RestApiId: !Ref PlsPlusRestApi
 
 
@@ -937,7 +1006,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
               method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -981,8 +1050,8 @@ Resources:
           - StatusCode: '200'
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorizationtoken'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
 
@@ -1025,7 +1094,6 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
               method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "context.authorizer.origin"
             ResponseTemplates:
               application/json: ''
-
