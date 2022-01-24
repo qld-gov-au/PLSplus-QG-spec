@@ -426,7 +426,7 @@ paths:
         * “Alias” Localities are used as substitutes for adjoining or “unapproved” communal named
         localities. Localities sharing the same postcode are also used as “aliases”.
         * State name is “Qld” unless otherwise specified.
-      operationId: ValidateAddress
+      operationId: ValidateAddressViaPost
       parameters: []
       requestBody:
         description: ''
@@ -4667,7 +4667,7 @@ paths:
         - PLSplus-QG-ApiGateway
         - ValidateLotPlan
       description: See /ValidateLotPlan Post Description
-      operationId: ValidateLotPlan
+      operationId: ValidateLotPlanViaGet
       parameters:
         - name: lotNumber
           in: query
@@ -4874,7 +4874,7 @@ paths:
         2. A valid parcel will always have a confidence of 100. The meshblock will be supplied with any valid Lot Plan if requested.
         3. A &lt;ResultCount>1&lt;/ResultCount> is a valid parcel while a &lt;ResultCount>0&lt;/ResultCount> is an invalid parcel description.
         4. A valid parcel does not have always has a linked address.
-      operationId: ValidateLotPlan
+      operationId: ValidateLotPlanViaPost
       parameters: []
       requestBody:
         description: ''
@@ -6266,7 +6266,7 @@ paths:
         - PLSplus-QG-ApiGateway
         - ValidateCoordinates
       description: See /ValidateCoordinates Post Description
-      operationId: ValidateCoordinates
+      operationId: ValidateCoordinatesViaGet
       parameters:
         - name: latitude
           in: query
@@ -6334,7 +6334,7 @@ paths:
       tags:
         - PLSp-QG
         - ValidateCoordinates
-      summary: ValidateCoordinates
+      summary: ValidateCoordinatesViaPost
       description: |
         ## Design Requirements
         The ValidateCoordinates operation provides finds the closest address and Parcel description from entered Lat/Lon coordinates. The service searches up to 250m radius from a requested location to find the closest address. The closest point (address site or parcel centroid) will be displayed even if the site has no address, eg a National Park (Lot/Plan) with no address. If no address is found within 250m the co-ordinate is passed to another service to determine the LotPlan, which is used to find an address (using ValidateLotPlan function).
@@ -6440,7 +6440,7 @@ paths:
         - PLSplus-QG-ApiGateway
         - AutoCompleteAddress
       description: See /AutoCompleteAddress Post Description
-      operationId: AutoCompleteAddress
+      operationId: AutoCompleteAddressViaGet
       parameters:
         - name: query
           in: query
@@ -6476,7 +6476,7 @@ paths:
         1. No punctuation is required in the request string for this operation. Refrain from using fullstops as they will cause problems with this operation.
         2. If after about 8 characters (numbers and characters) no meaningful results are being returned chances are a typo has occurred or the address doesn’t exist.
         3. The service is best used to call an address after a number and part street name are entered. Calling the service before this time will no doubt just produce rubbish candidates and put extra unwarranted load on the service.
-      operationId: AutoCompleteAddress
+      operationId: AutoCompleteAddressViaPost
       parameters: []
       requestBody:
         description: ''
