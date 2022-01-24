@@ -44,12 +44,16 @@ jobs:
           PLSNAME: ${{secrets.PLSPLUSQG_USERNAME}}
           PLSPASS: ${{secrets.PLSPLUSQG_PASSWORD}}
       - name: Build with Maven Full
-        if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
+#        if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
         run: cd api && mvn --batch-mode --update-snapshots verify
 
-      - name: Build with Maven Exclude External Integration Tests
-        if: needs.checksecret.outputs.is_MY_SECRET_set == 'false'
-        run: cd api && mvn --batch-mode --update-snapshots verify  -DexcludedGroups=ExternalIntegrationTest
+#      - name: Build with Maven Full
+#        if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
+#        run: cd api && mvn --batch-mode --update-snapshots verify
+#
+#      - name: Build with Maven Exclude External Integration Tests
+#        if: needs.checksecret.outputs.is_MY_SECRET_set == 'false'
+#        run: cd api && mvn --batch-mode --update-snapshots verify  -DexcludedGroups=ExternalIntegrationTest
 
 
       - name: Package artifacts
@@ -60,7 +64,7 @@ jobs:
          cp -r  api/PLSplusQG-Jersey2Client/target/generated-sources/swagger/docs staging
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
-        if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
+#        if: needs.checksecret.outputs.is_MY_SECRET_set == 'true'
         with:
           name: Package
           path: staging

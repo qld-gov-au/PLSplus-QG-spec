@@ -4,7 +4,6 @@ import au.gov.qld.ssq.api.plsplus.qg.handler.ApiClient;
 import au.gov.qld.ssq.api.plsplus.qg.handler.ApiException;
 import au.gov.qld.ssq.api.plsplus.qg.handler.Configuration;
 import au.gov.qld.ssq.api.plsplus.qg.handler.auth.HttpBasicAuth;
-import au.gov.qld.ssq.api.plsplus.qg.handler.auth.ApiKeyAuth;
 import au.gov.qld.ssq.api.plsplus.qg.model.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.slf4j.Logger;
@@ -19,21 +18,19 @@ import java.util.List;
 
 @Service
 public class PlsPlusQgService {
+    private Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     @Autowired
     public PlsPlusQgService(PlsPlusQgConfig config) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
         if (config.getOrigin() != null) {
+            //Required to set a restricted header.
             System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
             defaultClient.addDefaultHeader("origin", config.getOrigin());
         }
         if (config.getApiKey() != null) {
-            // Configure HTTP basic authorization: BasicAuth
-//            ApiKeyAuth apiKeyAuth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-//            apiKeyAuth.setApiKey(config.getApiKey());
             defaultClient.setApiKey(config.getApiKey());
-        } else if (config.getPassword() == null || config.getUsername() == null)  {
+        } else if (config.getPassword() == null || config.getUsername() == null) {
             // Configure HTTP basic authorization: BasicAuth
             HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("BasicAuth");
             basicAuth.setUsername(config.getUsername());
@@ -55,6 +52,7 @@ public class PlsPlusQgService {
 
     /**
      * Takes partial address and gives a list of full addresses
+     *
      * @param addressLookup
      * @return
      * @throws ApiException
@@ -70,8 +68,10 @@ public class PlsPlusQgService {
         logger.debug("autoCompleteAddressPost Result: {}", results);
         return results;
     }
+
     /**
      * Takes partial address and gives a list of full addresses
+     *
      * @param addressLookup
      * @return
      * @throws ApiException
@@ -88,6 +88,7 @@ public class PlsPlusQgService {
 
     /**
      * Takes full address (or parital) and gives list of results with confidence rating (can return 0 or 100's)
+     *
      * @param fullAddress
      * @param includeMesh
      * @return
@@ -105,8 +106,10 @@ public class PlsPlusQgService {
         logger.debug("parseAddressViaPost Result: {}", output);
         return output.getParseAddressResponse().getParseAddressResult();
     }
+
     /**
      * Takes full address (or parital) and gives list of results with confidence rating (can return 0 or 100's)
+     *
      * @param fullAddress
      * @return
      * @throws ApiException
@@ -128,7 +131,7 @@ public class PlsPlusQgService {
      * @return
      * @throws ApiException
      */
-    public ValidateCoordinatesResult validateCoordinatesViaPost(BigDecimal latitude, BigDecimal longitude, boolean includeMesh) throws ApiException {
+    public ValidateCoordinatesResponse validateCoordinatesViaPost(BigDecimal latitude, BigDecimal longitude, boolean includeMesh) throws ApiException {
         logger.debug("validateCoordinatesViaPost Request: Lat: {} Long: {}", latitude, longitude);
         ValidateCoordinatesApi plSpQgApi = new ValidateCoordinatesApi();
         PLSPlusValidateCoordinatesInputMessage input = new PLSPlusValidateCoordinatesInputMessage();
@@ -139,8 +142,9 @@ public class PlsPlusQgService {
         input.setValidateCoordinates(vc);
         PLSPlusValidateCoordinatesOutputMessage output = plSpQgApi.validateCoordinatesViaPost(input);
         logger.debug("validateCoordinatesViaPost Result: {}", output);
-        return output.getValidateCoordinatesResponse().getValidateCoordinatesResult();
+        return output.getValidateCoordinatesResponse();
     }
+
     /**
      * Takes Latitude and Longitude which is inside qld state and gives closes address (could be more than 1)
      *
@@ -149,16 +153,17 @@ public class PlsPlusQgService {
      * @return
      * @throws ApiException
      */
-    public ValidateCoordinatesResult validateCoordinatesViaGet(BigDecimal latitude, BigDecimal longitude) throws ApiException {
+    public ValidateCoordinatesResponse validateCoordinatesViaGet(BigDecimal latitude, BigDecimal longitude) throws ApiException {
         logger.debug("validateCoordinatesViaGet Request: Lat: {} Long: {}", latitude, longitude);
         ValidateCoordinatesApi plSpQgApi = new ValidateCoordinatesApi();
         PLSPlusValidateCoordinatesOutputMessage output = plSpQgApi.validateCoordinatesViaGet(latitude.toString(), longitude.toString());
         logger.debug("validateCoordinatesViaGet Result: {}", output);
-        return output.getValidateCoordinatesResponse().getValidateCoordinatesResult();
+        return output.getValidateCoordinatesResponse();
     }
 
     /**
      * Returns address details of a lot and plan document
+     *
      * @param lot
      * @param plan
      * @param includeMesh
@@ -178,8 +183,10 @@ public class PlsPlusQgService {
         logger.debug("validateLotPlanViaPost Result: {}", output);
         return output.getValidateLotPlanResponse().getValidateLotPlanResult();
     }
+
     /**
      * Returns address details of a lot and plan document
+     *
      * @param lot
      * @param plan
      * @return
@@ -195,6 +202,7 @@ public class PlsPlusQgService {
 
     /**
      * validate split address
+     *
      * @param addressObject
      * @param includeMesh
      * @return

@@ -5060,7 +5060,7 @@ paths:
         - PLSplus-QG-ApiGateway
         - ParseAddress
       description: See /ParseAddress Post Description
-      operationId: ParseAddress
+      operationId: ParseAddressViaGet
       parameters:
         - name: query
           in: query
@@ -5714,7 +5714,7 @@ paths:
         ParseAddress Request calling Meshblock.
 
         The switches for the meshblockOption are&colon; “**Include**” to return a value; and “**Exclude**” to not return a value. Note that input values for meshblock Option are case-sensitive.
-      operationId: ParseAddress
+      operationId: ParseAddressViaPost
       parameters: []
       requestBody:
         description: ''
@@ -6359,7 +6359,7 @@ paths:
         of the property boundary.
         * Any aliases of the primary addresses returned.
         * Coordinates attached to the returned addresses, if available, may consist of the following&colon; Centroid of property, Centroid of street alignment, Point of entry, Delivery point, and any other that may be populated into the future.
-      operationId: ValidateCoordinates
+      operationId: ValidateCoordinatesViaPost
       parameters: []
       requestBody:
         description: ''
@@ -6504,6 +6504,26 @@ components:
       type: http
       scheme: basic
   schemas:
+    Fault:
+      title: Fault Object
+      description:  "This is a generic fault object if something not normal Occurs"
+      type: object
+      properties:
+        Response:
+          $ref: '#/components/schemas/FaultResponse'
+    FaultResponse:
+      title: Fault Response Object
+      description: "This is a generic fault object if something not normal Occurs"
+      type: object
+      properties:
+        referenceId:
+          type: string
+        faultCode:
+          type: string
+        faultString:
+          type: string
+        timeStamp:
+          type: string
     MeshblockOption:
       title: Meshblock Option
       description: |
@@ -7483,6 +7503,8 @@ components:
         - ValidateCoordinatesResult
       type: object
       properties:
+        ValidateCoordinatesFault:
+          $ref: '#/components/schemas/Fault'
         ValidateCoordinatesResult:
           $ref: '#/components/schemas/ValidateCoordinatesResult'
     ValidateCoordinatesResult:

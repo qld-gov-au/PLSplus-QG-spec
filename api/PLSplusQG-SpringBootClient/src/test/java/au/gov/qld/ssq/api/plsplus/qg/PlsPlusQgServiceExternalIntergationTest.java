@@ -4,7 +4,6 @@ import au.gov.qld.ssq.api.plsplus.qg.handler.ApiException;
 import au.gov.qld.ssq.api.plsplus.qg.model.*;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +17,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,19 +64,20 @@ public class PlsPlusQgServiceExternalIntergationTest {
         assertThat(output.get(11)).isEqualTo("27 PLUNKETT ST WOODRIDGE QLD 4114");
     }
 
-    private OffsetDateTime getNowMinusOneSecond() {
-        return OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)))
-            .minus(1L, ChronoUnit.SECONDS);
+    private OffsetDateTime getNowMinusCacheTime() {
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)));
+
+        return now.minus(10L, ChronoUnit.MINUTES);
     }
 
     @Tag("ExternalIntegrationTest")
     @Test
     public void parseAddressTestSingleViaGet() throws ApiException {
-        OffsetDateTime now = getNowMinusOneSecond();
+        OffsetDateTime now = getNowMinusCacheTime();
         ParseAddressResult result = plsPlusQgService.parseAddressViaGet("27 PLUM PDE NERANG QLD 4211");
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
-        assertThat(firstObject.getMetaData().size()).isEqualTo(2);
+        assertThat(firstObject.getMetaData().size()).isEqualTo(3);
         assertThat(firstObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
         assertThat(OffsetDateTime.parse(firstObject.getMetaData().get(0).getValue())).isAfterOrEqualTo(now);
         assertThat(firstObject.getMetaData().get(1).getName()).isEqualTo("FullAddressString");
@@ -109,11 +108,11 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Tag("ExternalIntegrationTest")
     @Test
     public void parseAddressTestSingleViaPost() throws ApiException {
-        OffsetDateTime now = getNowMinusOneSecond();
+        OffsetDateTime now = getNowMinusCacheTime();
         ParseAddressResult result = plsPlusQgService.parseAddressViaPost("27 PLUM PDE NERANG QLD 4211", false);
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
-        assertThat(firstObject.getMetaData().size()).isEqualTo(2);
+        assertThat(firstObject.getMetaData().size()).isEqualTo(3);
         assertThat(firstObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
         assertThat(OffsetDateTime.parse(firstObject.getMetaData().get(0).getValue())).isAfterOrEqualTo(now);
         assertThat(firstObject.getMetaData().get(1).getName()).isEqualTo("FullAddressString");
@@ -144,7 +143,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Tag("ExternalIntegrationTest")
     @Test
     public void parseAddressTestMulti() throws ApiException {
-        OffsetDateTime now = getNowMinusOneSecond();
+        OffsetDateTime now = getNowMinusCacheTime();
         ParseAddressResult result = plsPlusQgService.parseAddressViaPost("u5/74 Wardoo St Ashmore", false);
         assertThat(result.getResultCount()).isEqualTo(17);
         Map<String, Result> sortedResults = new HashMap<>();
@@ -154,7 +153,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
         }
 
         Result firstObject = sortedResults.get("BELLBIRD GROVE");
-        assertThat(firstObject.getMetaData().size()).isEqualTo(2);
+        assertThat(firstObject.getMetaData().size()).isEqualTo(3);
         assertThat(firstObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
         assertThat(OffsetDateTime.parse(firstObject.getMetaData().get(0).getValue())).isAfterOrEqualTo(now);
         assertThat(firstObject.getMetaData().get(1).getName()).isEqualTo("FullAddressString");
@@ -200,7 +199,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
 //15 = {Result@7023} "class Result {\n physicalAddressIndicator: Y\n metaData: [class MetaData {\n name: Timestamp\n value: 2021-05-03T11:52:53.3515339+10:00\n }, class MetaData {\n name: FullAddressString\n value: UNIT 5 74 WARDOO ST, ASHMORE QLD 4214\n }]\n address: class Address {\n roadNumber: class RoadNumber {\n first: 74\n last: null\n }\n road: class Road {\n name: WARDOO\n typeCode: ST\n suffix: null\n }\n siteName: DOLPHIN NORTH\n unit: class Unit {\n typeCode: U\n number: 5\n }\n level: null\n locality: ASHMORE\n state: QLD\n postcode: 4214\n }\n parcel: class Parcel {\n lot: 5\n plan: BUP8707\n }\n localGovernmentArea: class LocalGovernmentArea {\n code: 3430\n name: GOLD COAST CITY\n }\n geocode: [class Geocode {\n typeCode: PC\n latitude: -27.98466131\n longitude: 153.39205"
 
         Result lastObject = sortedResults.get("ACACIA CLOSE");
-        assertThat(lastObject.getMetaData().size()).isEqualTo(2);
+        assertThat(lastObject.getMetaData().size()).isEqualTo(3);
         assertThat(lastObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
         assertThat(OffsetDateTime.parse(lastObject.getMetaData().get(0).getValue())).isAfterOrEqualTo(now);
         assertThat(lastObject.getMetaData().get(1).getName()).isEqualTo("FullAddressString");

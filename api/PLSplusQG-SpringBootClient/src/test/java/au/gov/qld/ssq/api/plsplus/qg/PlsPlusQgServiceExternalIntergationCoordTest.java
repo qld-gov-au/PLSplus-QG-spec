@@ -2,7 +2,6 @@ package au.gov.qld.ssq.api.plsplus.qg;
 
 import au.gov.qld.ssq.api.plsplus.qg.handler.ApiException;
 import au.gov.qld.ssq.api.plsplus.qg.model.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,8 +28,8 @@ public class PlsPlusQgServiceExternalIntergationCoordTest {
     @Tag("ExternalIntegrationTest")
     @Test
     public void shouldGetAddressFromCoodinatesPassedInViaPost() throws ApiException {
-        OffsetDateTime now = getNowMinusOneSecond();
-        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinatesViaPost(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(153.33099322), false);
+        OffsetDateTime now = getNowMinusCacheTime();
+        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinatesViaPost(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(153.33099322), false).getValidateCoordinatesResult();
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
         assertThat(firstObject.getMetaData().size()).isEqualTo(3);
@@ -63,14 +59,15 @@ public class PlsPlusQgServiceExternalIntergationCoordTest {
         assertThat(firstObject.getAliases()).isNull();
         assertThat(firstObject.getConfidence()).isEqualTo(100);
     }
+
     @Tag("ExternalIntegrationTest")
     @Test
     public void shouldGetAddressFromCoodinatesPassedInViaGet() throws ApiException {
-        OffsetDateTime now = getNowMinusOneSecond();
-        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinatesViaGet(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(153.33099322));
+        OffsetDateTime now = getNowMinusCacheTime();
+        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinatesViaGet(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(153.33099322)).getValidateCoordinatesResult();
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
-        assertThat(firstObject.getMetaData().size()).isEqualTo(2);
+        assertThat(firstObject.getMetaData().size()).isEqualTo(3);
         assertThat(firstObject.getMetaData().get(0).getName()).isEqualTo("Timestamp");
         assertThat(OffsetDateTime.parse(firstObject.getMetaData().get(0).getValue())).isAfterOrEqualTo(now);
         assertThat(firstObject.getMetaData().get(1).getName()).isEqualTo("FullAddressString");
@@ -101,79 +98,58 @@ public class PlsPlusQgServiceExternalIntergationCoordTest {
     @Tag("ExternalIntegrationTest")
     @Test()
     public void expectApiExcaptionFromValidateCoordinatesWithInvalidLongitudeCoordViaGet() throws ApiException {
-        Assertions.assertThrows(ApiException.class, () -> {
-            try {
-                plsPlusQgService.validateCoordinatesViaGet(BigDecimal.valueOf(-128.00323935), BigDecimal.valueOf(180.33099322));
-            } catch (ApiException e) {
-                assertThat(e.getResponseBody()).contains("s:InvalidRequest");
-                assertThat(e.getResponseBody()).contains("Invalid Longitude");
-                throw e;
-            }
-        });
+        ValidateCoordinatesResponse result = plsPlusQgService.validateCoordinatesViaGet(BigDecimal.valueOf(-128.00323935), BigDecimal.valueOf(180.33099322));
+        assertThat(result.getValidateCoordinatesResult()).isNull();
+        assertThat(result.getValidateCoordinatesFault().getResponse().getFaultCode()).contains("s:InvalidRequest");
+        assertThat(result.getValidateCoordinatesFault().getResponse().getFaultString()).contains("Invalid Longitude");
     }
 
     @Tag("ExternalIntegrationTest")
     @Test()
     public void expectApiExcaptionFromValidateCoordinatesWithInvalidLatCoordViaGet() throws ApiException {
-        Assertions.assertThrows(ApiException.class, () -> {
-            try {
-                plsPlusQgService.validateCoordinatesViaGet(BigDecimal.valueOf(-188.00323935), BigDecimal.valueOf(120.33099322));
-            } catch (ApiException e) {
-                assertThat(e.getResponseBody()).contains("s:InvalidRequest");
-                assertThat(e.getResponseBody()).contains("Invalid Latitude");
-                throw e;
-            }
-        });
+        ValidateCoordinatesResponse result = plsPlusQgService.validateCoordinatesViaGet(BigDecimal.valueOf(-188.00323935), BigDecimal.valueOf(120.33099322));
+        assertThat(result.getValidateCoordinatesResult()).isNull();
+        assertThat(result.getValidateCoordinatesFault().getResponse().getFaultCode()).contains("s:InvalidRequest");
+        assertThat(result.getValidateCoordinatesFault().getResponse().getFaultString()).contains("Invalid Latitude");
     }
 
     @Tag("ExternalIntegrationTest")
     @Test
     public void shouldHaveEmptyResultSetforGetAddressFromCoodinatesWithCoordOutsideQldViaGet() throws ApiException {
-        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinatesViaGet(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(154));
+        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinatesViaGet(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(154)).getValidateCoordinatesResult();
         assertThat(result.getResultCount()).isEqualTo(0);
         assertThat(result.getResults()).isNull();
     }
 
-    ///
-
     @Tag("ExternalIntegrationTest")
     @Test()
     public void expectApiExcaptionFromValidateCoordinatesWithInvalidLongitudeCoordViaPost() throws ApiException {
-        Assertions.assertThrows(ApiException.class, () -> {
-            try {
-                plsPlusQgService.validateCoordinatesViaPost(BigDecimal.valueOf(-128.00323935), BigDecimal.valueOf(180.33099322), false);
-            } catch (ApiException e) {
-                assertThat(e.getResponseBody()).contains("s:InvalidRequest");
-                assertThat(e.getResponseBody()).contains("Invalid Longitude");
-                throw e;
-            }
-        });
+        ValidateCoordinatesResponse result = plsPlusQgService.validateCoordinatesViaPost(BigDecimal.valueOf(-128.00323935), BigDecimal.valueOf(180.33099322), false);
+        assertThat(result.getValidateCoordinatesResult()).isNull();
+        assertThat(result.getValidateCoordinatesFault().getResponse().getFaultCode()).contains("s:InvalidRequest");
+        assertThat(result.getValidateCoordinatesFault().getResponse().getFaultString()).contains("Invalid Longitude");
     }
 
     @Tag("ExternalIntegrationTest")
     @Test()
     public void expectApiExcaptionFromValidateCoordinatesWithInvalidLatCoordViaPost() throws ApiException {
-        Assertions.assertThrows(ApiException.class, () -> {
-            try {
-                plsPlusQgService.validateCoordinatesViaPost(BigDecimal.valueOf(-188.00323935), BigDecimal.valueOf(120.33099322), false);
-            } catch (ApiException e) {
-                assertThat(e.getResponseBody()).contains("s:InvalidRequest");
-                assertThat(e.getResponseBody()).contains("Invalid Latitude");
-                throw e;
-            }
-        });
+
+        ValidateCoordinatesResponse result = plsPlusQgService.validateCoordinatesViaPost(BigDecimal.valueOf(-188.00323935), BigDecimal.valueOf(120.33099322), false);
+        assertThat(result.getValidateCoordinatesResult()).isNull();
+        assertThat(result.getValidateCoordinatesFault().getResponse().getFaultCode()).contains("s:InvalidRequest");
+        assertThat(result.getValidateCoordinatesFault().getResponse().getFaultString()).contains("Invalid Latitude");
     }
 
     @Tag("ExternalIntegrationTest")
     @Test
     public void shouldHaveEmptyResultSetforGetAddressFromCoodinatesWithCoordOutsideQldViaPost() throws ApiException {
-        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinatesViaPost(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(154), false);
+        ValidateCoordinatesResult result = plsPlusQgService.validateCoordinatesViaPost(BigDecimal.valueOf(-28.00323935), BigDecimal.valueOf(154), false).getValidateCoordinatesResult();
         assertThat(result.getResultCount()).isEqualTo(0);
         assertThat(result.getResults()).isNull();
     }
 
-    private OffsetDateTime getNowMinusOneSecond() {
+    private OffsetDateTime getNowMinusCacheTime() {
         return OffsetDateTime.now(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(10)))
-            .minus(1L, ChronoUnit.SECONDS);
+            .minus(10L, ChronoUnit.MINUTES);
     }
 }

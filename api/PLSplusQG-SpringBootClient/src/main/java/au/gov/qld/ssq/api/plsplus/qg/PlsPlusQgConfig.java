@@ -17,7 +17,6 @@ public class PlsPlusQgConfig {
     @Value(value = "${integration-points.plsplusqg.origin:#{null}}")
     private String origin;
 
-
     public String getUrl() {
         return url;
     }
