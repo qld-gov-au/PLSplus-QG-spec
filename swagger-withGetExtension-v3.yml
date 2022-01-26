@@ -321,12 +321,16 @@ info:
   version: '1.0'
 servers:
   - url: https://www.address.test-services.qld.gov.au/pls-plus-qg/
-    description: This is the test endpoint for Api Gateway
-  - url: https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest
-    description: This is the production endpoint
+    description: "This is the test endpoint for Api Gateway"
+  - url: https://www.address.staging-services.qld.gov.au/pls-plus-qg/
+    description: "This is the staging endpoint for Api Gateway"
+  - url: https://www.address.services.qld.gov.au/pls-plus-qg/
+    description: "This is the production endpoint for Api Gateway"
+  - url: https://information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/
+    description: "This is the production endpoint"
     variables: {}
   - url: https://uatplsp.information.qld.gov.au/service/Addressing/ValidationService/PLSplusQG/rest/
-    description: For development use this UAT endpoint
+    description: "For development use this UAT endpoint"
     variables: {}
 security:
   - ApiKey: []
