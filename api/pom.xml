@@ -48,7 +48,7 @@
         <pmd.version>6.42.0</pmd.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
-        <maven-site-plugin.version>3.10.0</maven-site-plugin.version>
+        <maven-site-plugin.version>3.11.0</maven-site-plugin.version>
 
         <jacoco.version>0.8.7</jacoco.version>
         <owasp.dependency-check-maven.version>6.5.3</owasp.dependency-check-maven.version>
