@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -40,7 +40,7 @@
         <swagger-annotations.version>2.1.13</swagger-annotations.version>
         <jackson.version>2.13.5</jackson.version>
         <jersey.version>2.39.1</jersey.version>
-        <jersey-hk2.version>2.39.1</jersey-hk2.version>
+        <jersey-hk2.version>3.1.1</jersey-hk2.version>
 
 
         <checkstyle.version>3.1.2</checkstyle.version>
