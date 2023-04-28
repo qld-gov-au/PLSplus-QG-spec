@@ -74,7 +74,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Test
     public void parseAddressTestSingleViaGet() throws ApiException {
         OffsetDateTime now = getNowMinusCacheTime();
-        ParseAddressResult result = plsPlusQgService.parseAddressViaGet("27 PLUM PDE NERANG QLD 4211");
+        ParseAddressResult result = plsPlusQgService.parseAddressViaGet("27 PLUM PDE, NERANG QLD 4211");
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
         assertThat(firstObject.getMetaData().size()).isEqualTo(3);
@@ -109,7 +109,7 @@ public class PlsPlusQgServiceExternalIntergationTest {
     @Test
     public void parseAddressTestSingleViaPost() throws ApiException {
         OffsetDateTime now = getNowMinusCacheTime();
-        ParseAddressResult result = plsPlusQgService.parseAddressViaPost("27 PLUM PDE NERANG QLD 4211", false);
+        ParseAddressResult result = plsPlusQgService.parseAddressViaPost("27 PLUM PDE, NERANG QLD 4211", false);
         assertThat(result.getResultCount()).isEqualTo(1);
         Result firstObject = result.getResults().getResult().get(0);
         assertThat(firstObject.getMetaData().size()).isEqualTo(3);
