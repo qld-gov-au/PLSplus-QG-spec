@@ -24,7 +24,7 @@ logging:
 integration-points:
   plsplusqg:
     url: "https://www.address.test-services.qld.gov.au/pls-plus-qg" #usage limited key for cicd testing, don't use anywhere else as it limit is very very low
-    apiKey: "testcicd2022" #usage limited key for cicd testing, don't use anywhere else as it limit is very very low
+    apiKey: "qldonline" #usage limited key for cicd testing, don't use anywhere else as it limit is very very low
     origin: "https://github.com/"
 #    username: "${PLS_USERNAME}"
 #    password: "${PLS_PASSWORD}"
