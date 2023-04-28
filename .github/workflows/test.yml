@@ -15,7 +15,7 @@ jobs:
           MY_SECRET: ${{ secrets.PLSPLUSQG_USERNAME }}
         run: |
           echo "is_MY_SECRET_set: ${{ env.MY_SECRET != '' }}"
-          echo "::set-output name=is_MY_SECRET_set::${{ env.MY_SECRET != '' }}"
+          echo "is_MY_SECRET_set=${{ env.MY_SECRET != '' }}" >> $GITHUB_OUTPUT
   build:
     needs: [ checksecret ]
     runs-on: ubuntu-latest
