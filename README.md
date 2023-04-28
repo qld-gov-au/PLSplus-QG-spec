@@ -1,8 +1,11 @@
 # PLSplus-QG-spec
 Property Location Service Plus PLSplus QG Version -REST Spec
 
-Natural Resources and Mines, Queensland Government, Property Locations Service Plus - QG, licensed under Creative Commons Attribution.
+Property Location Service Plus - QG is offered under a Creative Commons - Attribution 4.0 International licence.
 
+The Department of Resources requests attribution in the following manner:
+
+© State of Queensland, Department of Resources (Property Location Service Plus - QG) 2021
 
 More general information can be found at 
 https://www.qld.gov.au/environment/land/title/addressing/finding
@@ -30,7 +33,7 @@ This Provides the starting point for using the QG (Qld Govt) version of the Prop
 
 Access to PLSplus-QG is recommended for all government agencies.
 
-Physical address validation is free of charge, however, users are responsible for their own implementation and supporting services. Application support services are only available to the core service by DNRME.
+Physical address validation is free of charge, however, users are responsible for their own implementation and supporting services. Application support services are only available to the core service by Department of Resources.
 
 The PLSplus-QG service will validate Australian addresses by including matches across unit number, street number, street name, street type, locality, state and postcode. The solution provides users with a selection of address candidates to pick from in the case where there is no exact match. The returned confidence on addresses is mapped as per Table 1 in Section 11.4. A fast AutoComplete address function is available in PLSplus for Queensland addresses. The QG version extends the Public version by the addition of validation of interstate addresses as well as ABS statistical meshblock information for all Australian addresses.
 
@@ -40,7 +43,7 @@ There may be future enhancements, but at this stage it meets the initial specifi
 
 
 ## 1) Data Source
-The Queensland Address Management Framework (QAMF) dataset is used to populate the service data source for Queenland addresses. The dataset is maintained by the Department of Natural Resources and Mines (DNRME) and updated nightly for use by client applications. Interstate addresses are provided by a third party (paid) service and use the GNAFF.
+The Queensland Address Management Framework (QAMF) dataset is used to populate the service data source for Queenland addresses. The dataset is maintained by the Department of Resources (DR) and updated nightly for use by client applications. Interstate addresses are provided by a third party (paid) service and use the GNAFF.
 
 The QAMF is the primary source of property location addressing information for Queensland. It is location centric, meaning that addresses can be geocoded against a variety of locations, eg centroid of the property, centroid of the street alignment, entrance of the property and the main building. It is the point of truth for addressing in Queensland and is continually maintained from data supplied by local government authorities (LGA’s).
 
@@ -86,19 +89,24 @@ Batch processing on the server side is not offered at this point in time. The Ql
 
 ## 3) Support Services
 
-DNRME will supply&colon;
+Department of Resources will supply&colon;
 * Business support&colon; described as granting access to the individual services and general business requests, and
 * Technical support&colon; described as support for the physical environment and associated hardware.
 
 Integration with applications, training and other support services within the user’s area is the responsibility of each user.
 
+Spatial Help Centre" https://spatial-qld-support.atlassian.net/servicedesk/customer/portals 
+
+Email: support@spatial-qld-support.atlassian.net
+
+
 ## 4) Service Security
-The QG versions of the service is made available to approved authenticated users, both internal to DNRME and other Queensland Government agencies.
+The QG versions of the service is made available to approved authenticated users, both internal to Department of Resources and other Queensland Government agencies.
 
 ## 5) Obtaining the Service
 The QG version of the service requires authentication by way of a username and password.
 
-Access to the QG service and provision of credentials can be obtained by sending a request to OpenData@dnrme.qld.gov.au and providing the following information&colon;
+Access to the QG service and provision of credentials can be obtained by sending a request to OpenData@resources.qld.gov.au and providing the following information&colon;
 
 
    * Preferred username*&colon; (eg plspQr-floodinfo)
@@ -125,10 +133,10 @@ Following approval from the delegated officer, credentials for the required serv
 
 If the following message is returned from a request it may be due to authentication problems&colon;
 
-"status"&colon; "error", “This request was rejected due to a violation. Please contact OpenData@dnrme.qld.gov.au, and provide this reference ID&colon; 12719710694116814232"}
+"status"&colon; "error", “This request was rejected due to a violation. Please contact OpenData@resources.qld.gov.au, and provide this reference ID&colon; 12719710694116814232"}
 
 
-Take a note of the time of the request and include it and your username in an email to OpenData@dnrme.qld.gov.au for assistance.
+Take a note of the time of the request and include it and your username in an email to OpenData@resources.qld.gov.au for assistance.
 
 ## 6) Licensing
 
