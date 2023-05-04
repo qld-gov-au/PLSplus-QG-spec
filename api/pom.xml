@@ -186,7 +186,7 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>7.0.0</version>
+                    <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>8.2.1</version>
                     <configuration>
                         <suppressionFile>${qa.directory}/owasp-dependency-checker-suppressions.xml</suppressionFile>
                         <failBuildOnCVSS>1</failBuildOnCVSS> <!-- should be 1-->
